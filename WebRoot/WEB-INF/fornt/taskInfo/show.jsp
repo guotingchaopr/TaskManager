@@ -152,7 +152,46 @@
 				</li>
 			</ul>
 		</div>
-	</div>						             
+	</div>
+	<c:if test="${branchList!=null}">
+	<div class="page-region">
+		<!--子任务-->
+		<div class="page-region-content" id="NotBegin">
+			<ul class="accordion" data-role="accordion">
+				<li class="active"><a href="#"><h3><li class="icon-tree-view"></li>分支任务</h3></a>
+					<div>
+						<ul class="listview fluid">
+							<c:forEach items="${branchList}" var="branch">
+								<li class="taskList bg-color-yellow"
+									value="${task.id}">
+									<div class="title">任务名称：${branch.branchName}</div>
+									<div>
+										任务描述：
+										<blockquote>${branch.branchInfo}</blockquote>
+										任务进度:
+										<div class="progress-bar">
+											<div class="bar bg-color-green"
+												style="width: ${branch.percent}%"></div>
+												<div class="bar bg-color-yellow"
+												style="width: ${100-branch.percent}%"></div>
+										</div>
+										<p class="place-right">
+											<strong>发起人:<a>${branch.taskMaker}</a></strong>
+										</p>
+									</div>
+								</li>
+								<li class="taskList bg-color-yellow" style="height:152px;">
+									<div class="title"><b>指定人:</b></div>
+									
+								</li>
+							</c:forEach>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	</c:if>						             
 </div>	                  
 <!-- footer -->
 <jsp:include page="../footer.html" flush="true" />

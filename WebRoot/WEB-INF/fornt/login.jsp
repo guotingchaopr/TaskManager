@@ -23,6 +23,7 @@
 <link href="./css/modern-responsive.css" rel="stylesheet">
 <link rel="stylesheet" href="./css/theme-dark.css" />
 <script type="text/javascript" src="./js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="./js/angular.js"></script>
 <style type="text/css">
 .metrouicss {
 	background-color: rgb(0, 125, 266);

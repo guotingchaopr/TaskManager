@@ -21,7 +21,7 @@
 	<!-- leftMenu -->
 	<div class="page-sidebar">
 		<ul class="sub-menu light">
-			<c:if test="${user_info.attrs['uname']!=null&&taskListRelative!=null}">
+			<c:if test="${user_info.attrs['uname']!=null}">
 				<li class="sticker sticker-color-black" data-for-id="Operate"><a
 				href="#">可操作任务</a></li>
 			</c:if>
@@ -45,10 +45,11 @@
 					<div id="OperateTask">
 					
 						<ul class="listview fluid">
-							<c:forEach items="${taskListRelative}" var="task">
+							<c:forEach items="${taskListAll}" var="task">
+							  <c:if test="${user_info.attrs['uname']==task.taskMaker}">
 								<li class="border-color-blue" value="${task.id}" >
 									<div class="Operate">任务名称：${task.taskName}</div>
-									<div class="time">任务时间：${task.creat_Time}</div>
+									<div class="time">任务时间：${task.create_Time}</div>
 									<div>
 										任务描述：
 										<blockquote>${task.taskInfo}</blockquote>
@@ -64,6 +65,7 @@
 										</p>
 									</div>
 								</li>
+								</c:if>
 							</c:forEach>
 						</ul>
 					</div></li>
@@ -106,12 +108,6 @@
 								</li>
 							</c:forEach>
 						</ul>
-						<!-- div class="span8" style="text-align: center;">
-							当前第<span id="pagCurrent">1</span>页,共<span id="pagTotal">${totalPage}</span>页,跳转至<input style="width: 20px;" type="text" name="pagNo" id="pagNo"></input>页
-							<button id="upPage" disabled>上一页</button>
-							<button id="downPage">下一页</button>
-							
-						</div -->
 					</div></li>
 			</ul>
 		</div>
@@ -233,6 +229,7 @@ function toPlace(location){
 			window.location.href="taskInfo/show/"+this.value;
 		});
 		
+	
 		var operate =$(".Operate").parent();
 		var tid;
 		operate.click(function() {
@@ -248,37 +245,6 @@ function toPlace(location){
 		$("#updateTask").click(function() {
 			window.location.href="updateTask/"+tid;
 		});
-		
-		//分页操作
-		var a = parseInt($("#pagCurrent").text());
-		$("#downPage").click(function(){
-			$("#upPage")[0].disabled=false;
-			a++;
-			
-			$.ajax({
-				url:"doPage",
-				type:"POST",
-				data:{"a":a},
-				success:function(){
-					$("#pagCurrent").text(a);
-					if(a==$("#pagTotal").text()){
-						$("#downPage")[0].disabled=true;
-					}
-				}
-			});
-			
-			
-		});
-		
-		$("#upPage").click(function(){
-			$("#downPage")[0].disabled=false;
-			a--;
-			$("#pagCurrent").text(a);
-			if(a==1){
-				$("#upPage")[0].disabled=true;
-			}
-		});
-		
 	});
 </script>
 </body>

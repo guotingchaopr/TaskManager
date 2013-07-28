@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import sun.util.logging.resources.logging;
-
-
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.wall.WallFilter;
+import com.guotingchao.model.impl.Branch;
 import com.guotingchao.model.impl.T_user_task;
 import com.guotingchao.model.impl.Task;
 import com.guotingchao.model.impl.User;
@@ -79,6 +77,7 @@ public class BaseConfig extends JFinalConfig {
 		me.add(dp);
 		// ActiveRecordPlugin
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
+		arp.addMapping("Branch", Branch.class);
 		arp.addMapping("User", User.class);
 		arp.addMapping("Task", Task.class); 
 		arp.addMapping("T_user_task", T_user_task.class);

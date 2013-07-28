@@ -27,10 +27,10 @@ public class Task extends Model<Task> implements ITaskDao{
 		}
 	}
 	public static Task taskDao = new Task();
-	
-	List<Task> taskList = new ArrayList<Task>();
-	Task tempTask = null;
-	
+//	
+//	List<Task> taskList = new ArrayList<Task>();
+//	Task tempTask = null;
+//	
 	public Map<String, Object> getAttrs(){
 	    return super.getAttrs();
 	}
@@ -54,22 +54,23 @@ public class Task extends Model<Task> implements ITaskDao{
 //		System.out.println("TotalRow"+page.getTotalRow());
 //		System.out.println("PageNumber"+page.getPageNumber());		
 //		return page;
-		List<Long> tidList = new ArrayList<Long>();
-		//获取对应类型的任务列表
-		taskList=Task.taskDao.find("select * from task where tasktype = ? and pid=0 order by id",taskType);
-		//得到任务列表id
-		for(Task task:taskList){
-			tidList.add(task.getLong("id"));
-		}
-		//清空任务列表
-		taskList.clear();
-		for(Long tid:tidList){
-			tempTask=Task.taskDao.find("select * from task where id=? ",tid).get(0);
-			taskList.add(tempTask);
-			findTask(tid);
-		}
-			
-		return taskList;
+//		List<Long> tidList = new ArrayList<Long>();
+//		//获取对应类型的任务列表
+//		taskList=Task.taskDao.find("select * from task where tasktype = ? and pid=0 order by id",taskType);
+//		//得到任务列表id
+//		for(Task task:taskList){
+//			tidList.add(task.getLong("id"));
+//		}
+//		//清空任务列表
+//		taskList.clear();
+//		for(Long tid:tidList){
+//			tempTask=Task.taskDao.find("select * from task where id=? ",tid).get(0);
+//			taskList.add(tempTask);
+//			findTask(tid);
+//		}
+//			
+//		return taskList;
+		return Task.taskDao.find("select * from task where tasktype = ?  order by id",taskType);
 	}
 	
 	@Override
@@ -84,28 +85,37 @@ public class Task extends Model<Task> implements ITaskDao{
 		
 		return Task.taskDao.find("select * from task where taskMaker = ? ",uname);
 	}
-	
 
+
+
+	@Override
+	public List<Task> findChildTask(Long tid) {
+
+		return Task.taskDao.find("select * from task where pid=? order by id",tid);
 	
-	public List<Task> findTask(Long tid){
-		
-		List<Task> taskProxyList = new ArrayList<Task>();
-		List<Long> tidList = new ArrayList<Long>();
-		//获取所有子元素
-		taskProxyList = Task.taskDao.find("select * from task where pid=? order by id",tid);
-		if(taskProxyList!=null){
-			//获取所有的子任务id
-			for(Task task:taskProxyList){
-				tidList.add(task.getLong("id"));
-			}
-			//获取所有子任务
-			for(Long id:tidList){
-				tempTask=Task.taskDao.find("select * from task where id=? ",id).get(0);
-				taskList.add(tempTask);
-				findTask(id);
-			}
-		}
-		return taskList;
 	}
 	
+
+//	
+//	public List<Task> findTask(Long tid){
+//		
+//		List<Task> taskProxyList = new ArrayList<Task>();
+//		List<Long> tidList = new ArrayList<Long>();
+//		//获取所有子元素
+//		taskProxyList = Task.taskDao.find("select * from task where pid=? order by id",tid);
+//		if(taskProxyList!=null){
+//			//获取所有的子任务id
+//			for(Task task:taskProxyList){
+//				tidList.add(task.getLong("id"));
+//			}
+//			//获取所有子任务
+//			for(Long id:tidList){
+//				tempTask=Task.taskDao.find("select * from task where id=? ",id).get(0);
+//				taskList.add(tempTask);
+//				findTask(id);
+//			}
+//		}
+//		return taskList;
+//	}
+//	
 }
