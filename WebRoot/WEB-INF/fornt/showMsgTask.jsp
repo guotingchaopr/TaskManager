@@ -29,7 +29,7 @@
 							<c:forEach items="${MsgTaskList}" var="task">
 								<li class="border-color-blue" value="${task.id}" >
 									<div class="title">任务名称：${task.taskName}</div>
-									<div class="time">任务时间：${task.creat_Time}</div>
+									<div class="time">任务时间：${task.create_Time}</div>
 									<div>
 										任务描述：
 										<blockquote>${task.taskInfo}</blockquote>

@@ -28,7 +28,7 @@ public class ShowController extends Controller{
 		Long tid = getParaToLong();
 		setAttr("userList",User.userDao.getUserByTaskId(tid));
 		setAttr("task", Task.taskDao.findTaskById(tid));
-		List<Branch> branchList = Branch.branchDao.findBrachBytid(tid);
+		List<Branch> branchList = Branch.branchDao.branchInfoBytid(tid);
 		if(branchList.size()>0){
 			setAttr("branchList", branchList);
 		}

@@ -33,10 +33,10 @@ public interface ITaskDao{
 	 * @return
 	 */
 	public List<Task> findTaskByUser(String uname);
-	/**
-	 * 通过tid获取子任务
-	 * @param tid
-	 * @return
-	 */
-	public List<Task> findChildTask(Long tid);
+//	/**
+//	 * 通过tid获取子任务
+//	 * @param tid
+//	 * @return
+//	 */
+//	public List<Task> findChildTask(Long tid);
 }

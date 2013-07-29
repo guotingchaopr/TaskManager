@@ -27,10 +27,10 @@ public class Task extends Model<Task> implements ITaskDao{
 		}
 	}
 	public static Task taskDao = new Task();
-//	
+	
 //	List<Task> taskList = new ArrayList<Task>();
 //	Task tempTask = null;
-//	
+	
 	public Map<String, Object> getAttrs(){
 	    return super.getAttrs();
 	}
@@ -45,7 +45,7 @@ public class Task extends Model<Task> implements ITaskDao{
 	
 	@Override
 	public List<Task> findTaskListByType(int taskType) {
-//分页取消  先做子任务模块
+//      分页取消  先做子任务模块
 //		int pageSize = Integer.parseInt(prop.getProperty("pageSize"));
 //		int pageNo = PaginationContext.getPageNo();
 //		String sqlExceptSelect="from task where tasktype ="+taskType;
@@ -70,7 +70,7 @@ public class Task extends Model<Task> implements ITaskDao{
 //		}
 //			
 //		return taskList;
-		return Task.taskDao.find("select * from task where tasktype = ?  order by id",taskType);
+		return Task.taskDao.find("select * from task where tasktype = ? order by id",taskType);
 	}
 	
 	@Override
@@ -85,18 +85,13 @@ public class Task extends Model<Task> implements ITaskDao{
 		
 		return Task.taskDao.find("select * from task where taskMaker = ? ",uname);
 	}
-
-
-
-	@Override
-	public List<Task> findChildTask(Long tid) {
-
-		return Task.taskDao.find("select * from task where pid=? order by id",tid);
-	
-	}
 	
 
-//	
+//	/**
+//	 * 递归调用获取子任务
+//	 * @param tid
+//	 * @return
+//	 */
 //	public List<Task> findTask(Long tid){
 //		
 //		List<Task> taskProxyList = new ArrayList<Task>();
@@ -117,5 +112,13 @@ public class Task extends Model<Task> implements ITaskDao{
 //		}
 //		return taskList;
 //	}
-//	
+
+
+
+//	@Override
+//	public List<Task> findChildTask(Long tid) {
+//		
+//		return Task.taskDao.find("select * from task where pid=? order by id",tid);
+//	}
+	
 }

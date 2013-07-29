@@ -14,7 +14,7 @@
 <!--  header-->
 <jsp:include page="../header.jsp" flush="true" />
 <!-- header End -->
-<div class="page secondary">
+<div class="page with-sidebar">
 	<!-- header -->
 	<div class="page-header">
 		<div class="page-header-content">
@@ -62,12 +62,12 @@
 								</div>
 							</li>
 							<li>
-								<div class="title"><h4>当前进度     ${task.taskPercent}%</h4></div>
+								<div class="title"><h4>当前进度     ${task.percent}%</h4></div>
 								<div>
 									<blockquote>
 										<div class="progress-bar" style="height: 30px;margin: auto;">
-											<div class="bar bg-color-green" style="width: ${task.taskPercent}%;"></div>
-											<div class="bar bg-color-yellow" style="width:${100-task.taskPercent}%"></div>
+											<div class="bar bg-color-green" style="width: ${task.percent}%;"></div>
+											<div class="bar bg-color-yellow" style="width:${100-task.percent}%"></div>
 										</div>
 									</blockquote>
 								</div>
@@ -90,7 +90,7 @@
 								<div class="title"><h4>初始时间</h4></div>
 								<div>
 									<blockquote>
-										<span><fmt:formatDate value="${task.creat_Time}" type="both" pattern="yyyy年MM月d日  EEEE HH:mm:ss"/>
+										<span><fmt:formatDate value="${task.create_Time}" type="both" pattern="yyyy年MM月d日  EEEE HH:mm:ss"/>
 	                  				    </span>
 									</blockquote>
 								</div>
@@ -176,13 +176,18 @@
 												style="width: ${100-branch.percent}%"></div>
 										</div>
 										<p class="place-right">
-											<strong>发起人:<a>${branch.taskMaker}</a></strong>
+											<strong>发起人:<a>${task.taskMaker}</a></strong>
 										</p>
 									</div>
 								</li>
-								<li class="taskList bg-color-yellow" style="height:152px;">
+								<li class="taskList bg-color-yellow" style="height:153px;">
 									<div class="title"><b>指定人:</b></div>
-									
+									<div>
+										
+										<p class="place-center"  style="text-align: center;font-size: 28px;">
+											<strong>${branch.uname}</strong>
+										</p>
+									</div>
 								</li>
 							</c:forEach>
 						</ul>
