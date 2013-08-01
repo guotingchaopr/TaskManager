@@ -289,3 +289,13 @@ hr {
 	padding-right: 5px;
 	padding-top: 5px;
 }
+.branchTable{
+	width: 142px;
+	float: left;
+	text-align: center;
+}
+.branchTitle{
+	text-align: center;
+	font-size: 20px;
+	margin-top: 5px;
+}

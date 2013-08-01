@@ -87,19 +87,71 @@
 								class="fg-color-red">${uid_error}</span></td>
 						</tr>
 						<tr>
-							<td colspan='2' id="brachTable">
-							
-							</td>
-						</tr>
-						<tr>
 							<td colspan='2' style="text-align: center;"><input
 								type="button" id="addBranch" value="添加模块" /> <input
 								type="button" id="addTask" value="添加" /> <input type="button"
 								value="返回" onclick="javascript:window.history.go(-1)" /></td>
 						</tr>
+						<tr>
+							<td colspan='2' id="brachTable">
+								<div class="border-color-blue span8" id="branchAll">
+									<div class="span8 branchTitle">
+									<b>任务模块</b> </div>
+								 	<div class="span8">
+									 <div class="branchTable">名称:</div>
+										 <div ><input class="span4" type="text" id="BranchName" placeholder="请输入名称" value="" /></div>
+									 </div>
+									
+									 <div class="span8 ">
+										 <div class="branchTable">描述:</div>
+										 <div ><textarea class="span4" placeholder="在这描述任务" id="branchInfo"></textarea></div>
+									 </div>
+									
+									 <div class="span8">
+										 <div class="branchTable">计划时间:</div>
+										 <div class="input-control text datepicker span4" style= "float: left;" id="picker1" data-Role="datepicker" data-param-lang="zh-cn">
+											 <input type="text" id="branchPlay_Time" name="branchPlay_Time" value="" />
+											 <button onclick="return false;" class="btn-date"></button>
+										 </div>
+									 </div>
+									 <div class="span8">
+										 <div class="branchTable">重要指数：</div>
+										 <div class="rating" data-role="rating" id="branchRating">
+											 <a href="javascript:void(0)" class=""></a> 
+											 <a href="javascript:void(0)" class=""></a> 
+											 <a href="javascript:void(0)" class=""></a> 
+											 <a href="javascript:void(0)" class=""></a> 
+											 <a href="javascript:void(0)" class=""></a> 
+											 <a href="javascript:void(0)" class=""></a>
+										</div>
+									</div>	
+									<div class="span8">
+										<div class="branchTable">指定人：</div>
+										<div style="float: left;">
+											<input type="text"	id="BranchUsername" readonly class="span3"/> 
+											<select id="branchUname">
+													<option>请选择</option>
+													<c:forEach items="${userListSession}" var="user">
+														<option value='${user.attrs["id"]}'>${user.attrs["uname"]}</option>
+													</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="span8">
+										<div class="span8" style="text-align: center;">
+											<input type="button" id="doAddBranch" value="确认添加" /> 
+										</div>
+									</div>			
+								</div >
+							</td>
+						</tr>
 					</table>
+					<input type="hidden" id="branch.branchName" name="branch.branchName" value="" />
+					<input type="hidden" id="branch.branchInfo" name="branch.branchInfo" value="" />
+					<input type="hidden" id="branch.play_Time" name="branch.play_Time" value="" />
+					<input type="hidden" id="branch.rank" name="branch.rank" value="" />
+					<input type="hidden" id="branch.uid" name="branch.uid" value="" />
 				</div>
-
 			</form>
 		</div>
 	</div>
@@ -136,51 +188,81 @@
 
 		$("#addTaskFrom").submit();
 	});
-	var brachHtml = "<div class='border-color-blue span8'>"+
-					 "	<div class='span8'>"+
-						 "<div style='width: 142px;float: left;text-align: center;'>名称:</div>"+
-							 "<div ><input type='text' id='BranchName' placeholder='请输入名称' name='task.taskName' value='' /></div>"+
-						 "</div>"+
-						
-						 "<div class='span8'>"+
-							 "<div style='width: 142px;float: left;text-align: center;'>描述:</div>"+
-							 "<div ><textarea placeholder='在这描述任务' id='task.taskInfo' name='task.taskInfo'></textarea></div>"+
-						 "</div>"+
-						
-						 "<div class='span8'>"+
-							 "<div style='width: 142px;float: left;text-align: center;'>计划时间:</div>"+
-							 "<div class='input-control text datepicker span4' style= 'float: left;' id='picker1' data-Role='datepicker' data-param-lang='zh-cn'>"+
-								 "<input type='text' id='task.play_Time' name='task.play_Time' value='' />"+
-								 "<button onclick='return false;' class='btn-date'></button>"+
-							 "</div>"+
-						 "</div>"+
-						 "<div class='span8'>"+
-							 "<div style='width: 142px;float: left;text-align: center;'>重要指数：</div>"+
-							 "<div class='rating' data-role='rating' id='rating'>"+
-								 "<a href='javascript:void(0)' class=''></a> "+
-								 "<a href='javascript:void(0)' class=''></a> "+
-								 "<a href='javascript:void(0)' class=''></a> "+
-								 "<a href='javascript:void(0)' class=''></a> "+
-								 "<a href='javascript:void(0)' class=''></a> "+
-								 "<a href='javascript:void(0)' class=''></a>"+
-							"</div>"+
-						"</div>	"+
-						"<div class='span8'>"+
-							"<div style='width: 142px;float: left;text-align: center;'>指定人：</div>"+
-							"<div style='float: left;'>"+
-								"<input type='text'	id='username' readonly class='span3'/> "+
-								"<select id='suname'>"+
-										"<option>请选择</option>"+
-										"<c:forEach items='${userListSession}' var='user'>"+
-											"<option value='${user.attrs['id']}'>${user.attrs['uname']}</option>"+
-										"</c:forEach>"+
-								"</select>"+
-							"</div>"+
-						"</div>	"+		
-				"</div >";
-				
+	
+	//添加分支模块
+	var branchName="";
+	var branchInfo="";
+	var branchRank="";
+	var branchUid="";
+	var branchPlayTime="";
+	
+	var userId="";
+	var bRank = "";
+	$("#branchUname").change(function() {
+		var index = this.selectedIndex;
+		if(index>0){
+			var BranchnameStr = this.children[index].text;
+			userId = this.value;
+			$("#BranchUsername").val(BranchnameStr);
+		}
+	});
+	
+	$("#doAddBranch").click(function() {
+		var playtime = $("#branchPlay_Time").val();
+		playtime = playtime.replace("年", "-");
+		playtime = playtime.replace("月", "-");
+		playtime = playtime.replace("日", "");
+		
+		bRank=$("#branchRating .rated").length;
+		
+		if(branchName==""||branchName==null){
+			branchName += $("#BranchName").val();
+		}else{
+			branchName += ","+$("#BranchName").val();
+		}
+			
+		if(branchInfo==""||branchInfo==null){
+			branchInfo += $("#branchInfo").val();
+		}else{
+			branchInfo += ","+$("#branchInfo").val();
+		}
+		
+		if(branchRank==""||branchRank==null){
+			branchRank += bRank;
+		}else{
+			branchRank += ","+bRank;
+		}
+		
+		if(branchPlayTime==""||branchPlayTime==null){
+			branchPlayTime += playtime;
+		}else{
+			branchPlayTime += ","+playtime;
+		}
+		if(branchUid==""||branchUid==null){
+			branchUid += userId;
+		}else{
+			branchUid += ","+userId;
+		}
+		
+		$("#branch\\.branchName").val(branchName);
+		$("#branch\\.branchInfo").val(branchInfo);
+		$("#branch\\.rank").val(branchRank);
+		$("#branch\\.uid").val(branchUid);
+		$("#branch\\.play_Time").val(branchPlayTime);
+		
+		console.log($("#branch\\.branchName").val());
+		console.log($("#branch\\.branchInfo").val());
+		console.log($("#branch\\.rank").val());
+		console.log($("#branch\\.uid").val());
+		console.log($("#branch\\.play_Time").val());
+		
+		$("#branchAll").hide();
+	});
+	
+
+		
 	$("#addBranch").click(function() {
-		$("#brachTable").html(brachHtml);
+		$("#branchAll").show();
 	});
 
 </script>

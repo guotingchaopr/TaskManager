@@ -28,7 +28,13 @@ public class LoginValidate extends Validator{
 		boolean checkFlag  =  checkIdenting(uname,upass,c.getSession());
 		if(checkFlag){
 			if(c.getSessionAttr("actionKey")!=null){
-				c.redirect((String) c.getSessionAttr("actionKey"));
+				try{
+					c.redirect((String) c.getSessionAttr("actionKey"));
+					log.info("前访问路径："+ c.getSessionAttr("actionKey"));
+				}catch(Exception e){
+					 log.debug(e.getMessage());
+				};
+				
 			}else{
 				c.redirect("");
 			}

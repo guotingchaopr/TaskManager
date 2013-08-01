@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import com.guotingchao.PaginationContext;
 import com.guotingchao.model.BaseModel;
+import com.guotingchao.model.impl.Branch;
 import com.guotingchao.model.impl.T_user_task;
 import com.guotingchao.model.impl.Task;
 import com.guotingchao.model.impl.User;
@@ -234,6 +235,8 @@ public class IndexController extends Controller{
 	@Before(AddTaskValidate.class)
 	public void doAddTask(){
 		try {
+			
+			
 			//保存新任务
 			Task task =new Task();
 			task.set("taskMaker", getPara("task.taskMaker"));
@@ -256,7 +259,53 @@ public class IndexController extends Controller{
 					user_task_list.add(temp_user_task);
 				}
 				T_user_task.taskUserDao.batchSave(user_task_list);
-				setAttr("add_success_msg", "添加成功");
+				
+				//添加模块
+				String bName = getPara("branch.branchName");
+				int temp = bName.split(",").length;
+				if(bName!=null && "".equals("")){
+					
+					if(temp>1){
+						String bNames[] = bName.split(",");
+						String bInfo[] = getPara("branch.branchInfo").split(",");
+						String bPlay_Time[] = getPara("branch.play_Time").split(",");
+						String bRank[] = getPara("branch.rank").split(",");
+						String bUid[] = getPara("branch.uid").split(",");
+						for(int i=0;i<temp;i++){
+							Branch branch = new Branch();
+							branch.set("tid",tid);
+							branch.set("branchName", bNames[i]);
+							branch.set("branchInfo", bInfo[i]);
+							play_time=sdf.parse(bPlay_Time[i]);
+							branch.set("play_Time", play_time);
+							branch.set("rank", bRank[i]);
+							branch.set("uid", bUid[i]);
+							if(branch.save()){
+								setAttr("add_success_msg", "添加成功");
+							}else{
+								setAttr("add_success_msg", "失败模块未添加");
+								return;
+							}
+						}
+					}else{
+						Branch branch = new Branch();
+						branch.set("tid",tid);
+						branch.set("branchName", bName);
+						branch.set("branchInfo", getPara("branch.branchInfo"));
+						play_time=sdf.parse(getPara("branch.play_Time"));
+						branch.set("play_Time", play_time);
+						branch.set("rank", getPara("branch.rank"));
+						branch.set("uid", getPara("branch.uid"));
+						if(branch.save()){
+							setAttr("add_success_msg", "添加成功");
+						}else{
+							setAttr("add_success_msg", "失败模块未添加");
+						}
+					}
+				}
+				
+				
+				
 			}
 		} catch (Exception e) {
 			log.error("添加任务" + getPara("task.taskName")+ "失败,原因：" + e.getMessage());
@@ -270,6 +319,7 @@ public class IndexController extends Controller{
 	 */
 	
 	public void login(){
+		
 		render("login.jsp");
 	}
 	/**

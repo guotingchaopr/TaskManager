@@ -24,8 +24,8 @@ public class ForntUrlInterceptor  implements Interceptor {
 		Controller c= ai.getController();
 	
 		//截取当前的URL存入session
-		c.setSessionAttr("actionKey", c.getRequest().getRequestURL().substring(33));
-		
+		c.setSessionAttr("actionKey", c.getRequest().getServletPath());
+		log.info("请求路径"+c.getRequest().getServletPath());
 		ai.invoke();
 		
 	}
