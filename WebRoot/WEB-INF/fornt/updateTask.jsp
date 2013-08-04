@@ -244,7 +244,7 @@ $("document").ready(function(){
 	$("#updateTask").click(function() {
 		
 		//任务等级
-		$("#task\\.rank").val($("#rating .rated").length);
+		$("#task\\.rank").val($(".rating .rated").length);
 		var percentStr = $("#slider_val").html();
 		$("#task\\.percent").val(percentStr.substring(0,percentStr.length-1));
 		//获取用户id

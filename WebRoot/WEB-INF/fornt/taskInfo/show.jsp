@@ -163,7 +163,7 @@
 						<ul class="listview fluid">
 							<c:forEach items="${branchList}" var="branch">
 								<li class="taskList bg-color-yellow"
-									value="${task.id}">
+									value="${branch.id}">
 									<div class="title">任务名称：${branch.branchName}</div>
 									<div>
 										任务描述：
@@ -203,6 +203,9 @@
 <!-- footerEnd -->
 <script type="text/javascript">
 	$("document").ready(function(){
+		$(".title").parent().click(function() {
+			window.location.href="branchInfo/show/"+this.value;
+		});
 	});
 </script>
 </body>

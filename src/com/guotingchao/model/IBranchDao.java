@@ -13,11 +13,18 @@ public interface IBranchDao {
 	 * 通过tid获取分支模块
 	 * @param tid
 	 */
-	public List<Branch> findBrachBytid(Long tid);
+	public List<BaseModel<Branch>> findBrachBytid(Long tid);
 	/**
 	 * 通过tid获取Branch信息包括执行人
 	 * @param tid
 	 * @return
 	 */
-	public List<Branch> branchInfoBytid(Long tid);
+	public List<BaseModel<Branch>> branchInfoBytid(Long tid);
+	
+	/**
+	 * 通过tid获取Branch信息包括执行人
+	 * @param tid
+	 * @return
+	 */
+	public Branch findBranchInfoBytid(Long tid);
 }

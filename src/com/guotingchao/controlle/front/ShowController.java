@@ -4,6 +4,7 @@ package com.guotingchao.controlle.front;
 import java.util.List;
 
 import com.guotingchao.interceptor.ForntUrlInterceptor;
+import com.guotingchao.model.BaseModel;
 import com.guotingchao.model.impl.Branch;
 import com.guotingchao.model.impl.Task;
 import com.guotingchao.model.impl.User;
@@ -28,7 +29,8 @@ public class ShowController extends Controller{
 		Long tid = getParaToLong();
 		setAttr("userList",User.userDao.getUserByTaskId(tid));
 		setAttr("task", Task.taskDao.findTaskById(tid));
-		List<Branch> branchList = Branch.branchDao.branchInfoBytid(tid);
+		List<BaseModel<Branch>> branchList = Branch.branchDao.branchInfoBytid(tid);
+		
 		if(branchList.size()>0){
 			setAttr("branchList", branchList);
 		}

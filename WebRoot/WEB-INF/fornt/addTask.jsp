@@ -16,7 +16,7 @@
 	<div class="page-header">
 		<div class="page-header-content">
 			<h1>
-				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>新任务<small>添加</small>
+				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>添加<small>新任务</small>
 			</h1>
 		</div>
 	</div>
@@ -86,66 +86,66 @@
 							</select> <input type="hidden" name="user.id" id="user.id" value="" /> <span
 								class="fg-color-red">${uid_error}</span></td>
 						</tr>
+							<tr>
+							<td>已加入模块：</td>
+							<td></td>
+						</tr>
 						<tr>
 							<td colspan='2' style="text-align: center;"><input
 								type="button" id="addBranch" value="添加模块" /> <input
 								type="button" id="addTask" value="添加" /> <input type="button"
 								value="返回" onclick="javascript:window.history.go(-1)" /></td>
 						</tr>
-						<tr>
-							<td colspan='2' id="brachTable">
-								<div class="border-color-blue span8" id="branchAll">
-									<div class="span8 branchTitle">
-									<b>任务模块</b> </div>
-								 	<div class="span8">
-									 <div class="branchTable">名称:</div>
-										 <div ><input class="span4" type="text" id="BranchName" placeholder="请输入名称" value="" /></div>
-									 </div>
-									
-									 <div class="span8 ">
-										 <div class="branchTable">描述:</div>
-										 <div ><textarea class="span4" placeholder="在这描述任务" id="branchInfo"></textarea></div>
-									 </div>
-									
-									 <div class="span8">
-										 <div class="branchTable">计划时间:</div>
-										 <div class="input-control text datepicker span4" style= "float: left;" id="picker1" data-Role="datepicker" data-param-lang="zh-cn">
-											 <input type="text" id="branchPlay_Time" name="branchPlay_Time" value="" />
-											 <button onclick="return false;" class="btn-date"></button>
-										 </div>
-									 </div>
-									 <div class="span8">
-										 <div class="branchTable">重要指数：</div>
-										 <div class="rating" data-role="rating" id="branchRating">
-											 <a href="javascript:void(0)" class=""></a> 
-											 <a href="javascript:void(0)" class=""></a> 
-											 <a href="javascript:void(0)" class=""></a> 
-											 <a href="javascript:void(0)" class=""></a> 
-											 <a href="javascript:void(0)" class=""></a> 
-											 <a href="javascript:void(0)" class=""></a>
-										</div>
-									</div>	
-									<div class="span8">
-										<div class="branchTable">指定人：</div>
-										<div style="float: left;">
-											<input type="text"	id="BranchUsername" readonly class="span3"/> 
-											<select id="branchUname">
-													<option>请选择</option>
-													<c:forEach items="${userListSession}" var="user">
-														<option value='${user.attrs["id"]}'>${user.attrs["uname"]}</option>
-													</c:forEach>
-											</select>
-										</div>
-									</div>
-									<div class="span8">
-										<div class="span8" style="text-align: center;">
-											<input type="button" id="doAddBranch" value="确认添加" /> 
-										</div>
-									</div>			
-								</div >
-							</td>
-						</tr>
 					</table>
+					<div class="border-color-blue span8" id="branchAll">
+						<div class="span8 branchTitle">
+						<b>任务模块</b> </div>
+					 	<div class="span8">
+						 <div class="branchTable">名称:</div>
+							 <div ><input class="span4" type="text" id="BranchName" placeholder="请输入名称" value="" /></div>
+						 </div>
+						
+						 <div class="span8 ">
+							 <div class="branchTable">描述:</div>
+							 <div ><textarea class="span4" placeholder="在这描述任务" id="branchInfo"></textarea></div>
+						 </div>
+						
+						 <div class="span8">
+							 <div class="branchTable">计划时间:</div>
+							 <div class="input-control text datepicker span4" style= "float: left;" id="picker1" data-Role="datepicker" data-param-lang="zh-cn">
+								 <input type="text" id="branchPlay_Time" name="branchPlay_Time" value="" />
+								 <button onclick="return false;" class="btn-date"></button>
+							 </div>
+						 </div>
+						 <div class="span8">
+							 <div class="branchTable">重要指数：</div>
+							 <div class="rating" data-role="rating" id="branchRating">
+								 <a href="javascript:void(0)" class=""></a> 
+								 <a href="javascript:void(0)" class=""></a> 
+								 <a href="javascript:void(0)" class=""></a> 
+								 <a href="javascript:void(0)" class=""></a> 
+								 <a href="javascript:void(0)" class=""></a> 
+								 <a href="javascript:void(0)" class=""></a>
+							</div>
+						</div>	
+						<div class="span8">
+							<div class="branchTable">指定人：</div>
+							<div style="float: left;">
+								<input type="text"	id="BranchUsername" readonly class="span3"/> 
+								<select id="branchUname">
+										<option>请选择</option>
+										<c:forEach items="${userListSession}" var="user">
+											<option value='${user.attrs["id"]}'>${user.attrs["uname"]}</option>
+										</c:forEach>
+								</select>
+							</div>
+						</div>
+						<div class="span8">
+							<div class="span8" style="text-align: center;">
+								<input type="button" id="doAddBranch" value="确认添加" /> 
+							</div>
+						</div>			
+					</div >
 					<input type="hidden" id="branch.branchName" name="branch.branchName" value="" />
 					<input type="hidden" id="branch.branchInfo" name="branch.branchInfo" value="" />
 					<input type="hidden" id="branch.play_Time" name="branch.play_Time" value="" />
@@ -249,12 +249,7 @@
 		$("#branch\\.rank").val(branchRank);
 		$("#branch\\.uid").val(branchUid);
 		$("#branch\\.play_Time").val(branchPlayTime);
-		
-		console.log($("#branch\\.branchName").val());
-		console.log($("#branch\\.branchInfo").val());
-		console.log($("#branch\\.rank").val());
-		console.log($("#branch\\.uid").val());
-		console.log($("#branch\\.play_Time").val());
+
 		
 		$("#branchAll").hide();
 	});
