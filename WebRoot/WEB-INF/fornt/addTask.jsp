@@ -25,7 +25,7 @@
 		<div class="page-region-content">
 			<form id="addTaskFrom" action="doAddTask" method="post">
 				<div class="row">
-					<table class="span8">
+					<table class="span8 border">
 						<tr>
 							<td>派发人:</td>
 							<td><input class="span4" type="text" id="task.taskMaker" value="${user_info.attrs['uname']}" readonly  value="" name="task.taskMaker" /></td>
@@ -77,22 +77,38 @@
 						</tr>
 						<tr>
 							<td>指定人：</td>
-							<td><input type="text"
-								id="username" readonly class="span3"/> <select id="suname">
-									<option>请选择</option>
+							<td>
+							<div class="span4">
+								<div id="username" class="span3 namecontrol" >
 									<c:forEach items="${userListSession}" var="user">
-										<option value="${user.attrs['id']}">${user.attrs['uname']}</option>
+									<div class="nameshow" id="${user.attrs['uname']}" >
+									<a href="javascript:void(0);" class="icon-cancel-2 closeName" id="${user.attrs['id']}"></a>
+									 <div class="singlename">${user.attrs['uname']}</div>
+									</div>
 									</c:forEach>
-							</select> <input type="hidden" name="user.id" id="user.id" value="" /> <span
-								class="fg-color-red">${uid_error}</span></td>
+								</div>
+							    <div class="span1 uname">
+								    <select id="suname">
+											<option>请选择</option>
+											<c:forEach items="${userListSession}" var="user">
+												<option value="${user.attrs['id']}">${user.attrs['uname']}</option>
+											</c:forEach>
+									</select> 
+								</div>
+								<div class="float:left;"><span class="fg-color-red">${uid_error}</span></div>
+							</div>
+							<input type="hidden" name="user.id" id="user.id" value="" /> </td>
 						</tr>
-							<tr>
-							<td>已加入模块：</td>
-							<td></td>
+							<tr id="modelName" >
+							<td>模块：</td>
+							<td>
+								<div class="span3 namecontrol" id="minBranch">
+								</div>
+								<div class="span1 addBranch" id="addBranch">添加模块 </div>
+							</td>
 						</tr>
 						<tr>
 							<td colspan='2' style="text-align: center;"><input
-								type="button" id="addBranch" value="添加模块" /> <input
 								type="button" id="addTask" value="添加" /> <input type="button"
 								value="返回" onclick="javascript:window.history.go(-1)" /></td>
 						</tr>
@@ -164,21 +180,36 @@
 	</c:if>
 </div>
 <script type="text/javascript">
-	var nameStr = valueStr = "";
+	
+	//添加名字
+	var nameStr = valueStr = singleName="";
 	$("#suname").change(function() {
 		var index = this.selectedIndex;
-		nameStr += this.children[index].text + " ";
-		if (valueStr == "") {
-			valueStr += this.value;
-		} else {
-			valueStr += "," + this.value;
-		}
-		$("#user\\.id").val(valueStr);
-		$("#username").val(nameStr);
+		singleName=this.children[index].text;
+		$("#"+singleName).show();
 		this.children[index].remove();
 	});
-
+	//删除名字
+	$(".closeName").click(function() {
+		$(this.parentElement).hide();
+		var uid = this.id;
+		$("#suname").append("<option value='"+uid+"'>"+this.parentElement.id+"</option>");
+		
+	});
+	
 	$("#addTask").click(function() {
+		var _nameshow = $(".nameshow");
+		for(var i=0;i<_nameshow.length;i++){
+			if(_nameshow[i].style.display=="block"){
+				if (valueStr == "") {
+					valueStr += _nameshow[i].children[0].id;
+				} else {
+					valueStr += "," + _nameshow[i].children[0].id;
+				}
+			}
+		}
+		//表单需要提交的内容赋值 
+		$("#user\\.id").val(valueStr);
 		$("#task\\.rank").val($("#rating .rated").length);
 		var playtime = $("#task\\.play_Time").val();
 		playtime = playtime.replace("年", "-");
@@ -198,6 +229,7 @@
 	
 	var userId="";
 	var bRank = "";
+	//添加分支 选择人员 选一个
 	$("#branchUname").change(function() {
 		var index = this.selectedIndex;
 		if(index>0){
@@ -206,7 +238,7 @@
 			$("#BranchUsername").val(BranchnameStr);
 		}
 	});
-	
+	//添加模块
 	$("#doAddBranch").click(function() {
 		var playtime = $("#branchPlay_Time").val();
 		playtime = playtime.replace("年", "-");
@@ -254,8 +286,6 @@
 		$("#branchAll").hide();
 	});
 	
-
-		
 	$("#addBranch").click(function() {
 		$("#branchAll").show();
 	});
