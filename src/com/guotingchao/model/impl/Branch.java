@@ -30,7 +30,7 @@ public class Branch extends BaseModel<Branch> implements IBranchDao {
 	@Override
 	public Branch findBranchInfoBytid(Long tid) {
 		// TODO Auto-generated method stub
-		return (Branch) branchDao.find("SELECT u.uname,b.* FROM `user` u,branch b WHERE b.tid=? and u.id=b.uid",tid).get(0);
+		return (Branch) branchDao.find("SELECT u.uname,b.* FROM `user` u,branch b WHERE b.id=? and u.id=b.uid",tid).get(0);
 	}
 
 
