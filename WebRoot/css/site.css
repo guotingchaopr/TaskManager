@@ -314,6 +314,12 @@ hr {
 	border: solid 1px #FFF;
 	display: none;
 }
+.branchshow{
+	background-color: #E6E6E6;
+	float:left; 
+	width: 218px;
+	border: solid 1px #FFF;
+}
 .namecontrol{
 	float:left !important;
 	border: solid 1px #BABABA;
@@ -337,5 +343,5 @@ hr {
 }
 .uname{
 	float: left !important;
-	margin-left: 7px;
+	
 }

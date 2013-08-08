@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import redis.clients.jedis.Jedis;
+
 import com.guotingchao.PaginationContext;
 import com.guotingchao.model.BaseModel;
 import com.guotingchao.model.impl.Branch;
@@ -34,6 +36,24 @@ import com.jfinal.plugin.activerecord.Model;
 public class IndexController extends Controller{
 	
 	Logger log= Log4jLogger.getLogger(IndexController.class);
+	Jedis jedis = new Jedis("127.0.0.1", 6379);
+	/**
+	 * 添加分支
+	 */
+	public void addBranch(){
+		User user = getSessionAttr("user_info");
+		
+		Long uid = user.getLong("id");
+		
+		String task_key = getSession().getId()+uid;
+		jedis.set(task_key+"userId", getPara("userId"));
+		jedis.set(task_key+"taskName", getPara("taskName"));
+		jedis.set(task_key+"taskInfo", getPara("taskInfo"));
+		jedis.set(task_key+"taskPlayTime", getPara("taskPlayTime"));
+		jedis.set(task_key+"taskRank", getPara("taskRank"));
+		
+		render("addBranch.jsp");
+	}
 	/**
 	 *  主页
 	 */
@@ -47,15 +67,6 @@ public class IndexController extends Controller{
 			}
 		}
 		
-		//设置起始页
-//		try{
-//			int pageNo = getParaToInt("a");
-//			PaginationContext.setPageNo(pageNo);
-//		}catch(Exception e){
-//			log.error(e.getMessage());
-//			PaginationContext.setPageNo(1);
-//		}
-		
 		//初始化任务
 		setAttr("taskListInit", Task.taskDao.findTaskListByType(0));
 		setAttr("taskListOn", Task.taskDao.findTaskListByType(1));
@@ -63,19 +74,6 @@ public class IndexController extends Controller{
 		setAttr("taskListBlocked", Task.taskDao.findTaskListByType(-1));
 		render("index.jsp");
 	}
-	/**
-	 * 分页操作
-	
-	public void doPage(){
-		int pageNo = getParaToInt("a");
-		//设置起始页
-		PaginationContext.setPageNo(pageNo);
-		//初始化任务
-		setAttr("taskListInit", Task.taskDao.findTaskListByType(0).getList());
-		setAttr("totalPage", Task.taskDao.findTaskListByType(0).getTotalPage());
-		render("index.jsp");
-	}
-	 */
 	/**
 	 * 获取消息任务内容
 	 */
@@ -225,6 +223,7 @@ public class IndexController extends Controller{
 		}
 		render("updateTask.jsp");
 	}
+	
 	/**
 	 * 添加新任务
 	 */
