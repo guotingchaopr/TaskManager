@@ -12,7 +12,9 @@ import org.json.JSONObject;
 
 import redis.clients.jedis.Jedis;
 
-import com.guotingchao.PaginationContext;
+import com.guotingchao.MyPlugin.RedisKit;
+import com.guotingchao.interceptor.ForntInterceptor;
+import com.guotingchao.interceptor.ForntUnameInterceptor;
 import com.guotingchao.model.BaseModel;
 import com.guotingchao.model.impl.Branch;
 import com.guotingchao.model.impl.T_user_task;
@@ -24,6 +26,8 @@ import com.guotingchao.validator.front.AddTaskValidate;
 import com.guotingchao.validator.front.LoginValidate;
 import com.guotingchao.validator.front.UpdateTaskValidate;
 import com.jfinal.aop.Before;
+import com.jfinal.aop.ClearInterceptor;
+import com.jfinal.aop.ClearLayer;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log4jLogger;
 import com.jfinal.log.Logger;
@@ -33,40 +37,46 @@ import com.jfinal.plugin.activerecord.Model;
  * 前端Index控制器
  * @author os-yugq
  */
+@Before(ForntUnameInterceptor.class)
 public class IndexController extends Controller{
 	
 	Logger log= Log4jLogger.getLogger(IndexController.class);
-	Jedis jedis = new Jedis("127.0.0.1", 6379);
+	Jedis jedis = RedisKit.getJedis();
+	StringBuffer branchStr = new StringBuffer();
 	/**
 	 * 添加分支
 	 */
+	@Before(ForntInterceptor.class)
 	public void addBranch(){
-		User user = getSessionAttr("user_info");
-		
-		Long uid = user.getLong("id");
-		
-		String task_key = getSession().getId()+uid;
-		jedis.set(task_key+"userId", getPara("userId"));
-		jedis.set(task_key+"taskName", getPara("taskName"));
-		jedis.set(task_key+"taskInfo", getPara("taskInfo"));
-		jedis.set(task_key+"taskPlayTime", getPara("taskPlayTime"));
-		jedis.set(task_key+"taskRank", getPara("taskRank"));
-		
+		if(getUser("id")!=null){
+			Long uid =Long.parseLong(getUser("id"));
+			String task_key = getSession().getId()+uid;
+			Task task= new Task();
+			task.set("taskName",getPara("taskName"));
+			task.set("taskInfo",getPara("taskInfo"));
+			task.set("rank",getPara("taskRank"));
+			task.set("play_Time",getPara("taskPlayTime"));
+			log.info(task.toJson());
+			jedis.set(task_key+"task", task.toJson());
+			setSessionAttr("task", task_key+"task");
+			
+			jedis.set(task_key+"userId", getPara("userId"));
+			setSessionAttr("userId", task_key+"userId");
+		}
 		render("addBranch.jsp");
+		//redirect("addBranch.jsp");
 	}
 	/**
 	 *  主页
 	 */
 	public void index(){
-		User user = getSessionAttr("user_info");
-		if(user!=null){
-			String uname = user.get("uname");
+		if(getUser("uname")!=null){
+			String uname = getUser("uname");
 			List<Task> taskListRelative = Task.taskDao.findTaskByUser(uname);
 			if(taskListRelative.size()>0){
 				setAttr("taskListRelative", taskListRelative);
 			}
 		}
-		
 		//初始化任务
 		setAttr("taskListInit", Task.taskDao.findTaskListByType(0));
 		setAttr("taskListOn", Task.taskDao.findTaskListByType(1));
@@ -78,12 +88,12 @@ public class IndexController extends Controller{
 	 * 获取消息任务内容
 	 */
 	public void msgInterceptor(){
-		User user =getSessionAttr("user_info");
 		HttpServletResponse response = getResponse();
-		response.setContentType("charset=utf-8");
 		JSONObject json = null;
-		if(user!=null){
-			Long uid = user.getLong("id");
+		response.setContentType("charset=utf-8");
+		
+		if(getUser("id")!=null){
+			Long uid = Long.parseLong(getUser("id"));
 			//获取有信息的任务
 			List<BaseModel<T_user_task>> list = T_user_task.taskUserDao.findMsgTaskByUid(uid);
 
@@ -96,6 +106,7 @@ public class IndexController extends Controller{
 				}
 				if(taskList.size()>0){
 					int last = taskList.size()-1;
+					
 					try {
 						json = new JSONObject(taskList.get(last).toJson());
 						json.put("MsgCount", count);
@@ -115,19 +126,20 @@ public class IndexController extends Controller{
 	 * 查看未读任务，并标识为已读
 	 */			
 	public void doCheckedMsgTask(){
-		User user = getSessionAttr("user_info");
-		Long uid = user.get("id");
-		int tid = getParaToInt("tid");
-		T_user_task.taskUserDao.checkedMsgTask(tid, uid);
+		if(getUser("id")!=null){
+			Long uid = Long.parseLong(getUser("id"));
+			int tid = getParaToInt("tid");
+			T_user_task.taskUserDao.checkedMsgTask(tid, uid);
+		}
+		
 		renderNull();
 	}
 	/**
 	 * 显示与自己相关的未查看任务
 	 */
 	public void showMsgTask(){
-		User user =getSessionAttr("user_info");
-		if(user!=null){
-			Long uid = user.getLong("id");
+		if(getUser("id")!=null){
+			Long uid = Long.parseLong(getUser("id"));
 			//获取有信息的任务
 			List<BaseModel<T_user_task>> list = T_user_task.taskUserDao.findMsgTaskByUid(uid);
 			if(list!=null){
@@ -227,7 +239,41 @@ public class IndexController extends Controller{
 	/**
 	 * 添加新任务
 	 */
+	@Before(ForntInterceptor.class)
 	public void addTask(){
+		if(getPara("branch.branchName")!=null){
+			if(getUser("id")!=null){
+				String branch_key = Utils.getCurTime()+getUser("id");
+				Branch branch = new Branch();
+				branch.set("branchName",getPara("branch.branchName"));
+				branch.set("branchInfo",getPara("branch.Info"));
+				branch.set("rank",getPara("branchRank"));
+				branch.set("play_Time",getPara("branch.play_Time"));
+				if(branchStr.toString()==""||branchStr==null){
+					branchStr.append(branch.toJson());
+				}else{
+					branchStr.append(","+branch.toJson());
+				}
+				
+				jedis.set(branch_key, "["+branchStr.toString()+"]");
+				setSessionAttr("branch_key",branch_key);
+			}
+		}
+		
+		String task_key  = getSessionAttr("task");
+		if(task_key!=null){
+			if(jedis.exists(task_key)){
+				try {
+					JSONObject json = new JSONObject(jedis.get(task_key));
+					setAttr("taskName", json.get("taskname"));
+					setAttr("taskInfo", json.get("taskinfo"));
+					setAttr("play_Time", json.get("play_time"));
+					setAttr("rank", json.get("rank"));
+				}catch(JSONException e){
+					log.error(e.getMessage());
+				}
+			}
+		}
 		setSessionAttr("userListSession",User.userDao.findUserList());
 		render("addTask.jsp");
 	}
@@ -235,8 +281,6 @@ public class IndexController extends Controller{
 	@Before(AddTaskValidate.class)
 	public void doAddTask(){
 		try {
-			
-			
 			//保存新任务
 			Task task =new Task();
 			task.set("taskMaker", getPara("task.taskMaker"));
@@ -333,9 +377,38 @@ public class IndexController extends Controller{
 	 * 退出登录
 	 */
 	public void loginOut(){
+		String user_info = getCookie("user_info");
+		if(user_info==null){
+			user_info = getSessionAttr("user_info");
+		}
+		jedis.del(user_info);
 		removeSessionAttr("user_info");
+		removeCookie("user_info");
 		removeSessionAttr("actionKey");
 		redirect("/");
+	}
+	/**
+	 * 获取user的 某个字段
+	 * @param key
+	 * @return
+	 */
+	public String getUser(String key){
+		String value = null;
+		String user_info = getCookie("user_info");
+		if(user_info==null){
+			user_info = getSessionAttr("user_info");
+		}
+		if(user_info!=null){
+			if(jedis.exists(user_info)){
+				try {
+					JSONObject json = new JSONObject(jedis.get(user_info));
+					value = json.getString(key);
+				}catch(JSONException e){
+					log.error(e.getMessage());
+				}
+			}
+		}
+		return value;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.guotingchao.controlle.front;
 
 import java.util.List;
 
+import com.guotingchao.interceptor.ForntUnameInterceptor;
 import com.guotingchao.interceptor.ForntUrlInterceptor;
 import com.guotingchao.model.BaseModel;
 import com.guotingchao.model.impl.Branch;
@@ -25,6 +26,7 @@ public class ShowController extends Controller{
 	/**
 	 * 任务详细页
 	 */
+	@Before(ForntUnameInterceptor.class)
 	public void index(){
 		Long tid = getParaToLong();
 		setAttr("userList",User.userDao.getUserByTaskId(tid));

@@ -23,25 +23,25 @@
 	<!-- end Header -->
 	<div class="page-region">
 		<div class="page-region-content">
-			<form id="addTaskFrom" action="doAddTask" method="post">
+			<form id="addBranchFrom" action="addTask" method="post">
 				<div class="row">
 					<div class="border-color-blue span8" id="branchAll">
 						<div class="span8 branchTitle">
 						<b>任务模块</b> </div>
 					 	<div class="span8">
 						 <div class="branchTable">名称:</div>
-							 <div ><input class="span4" type="text" id="BranchName" placeholder="请输入名称" value="" /></div>
+							 <div ><input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" /></div>
 						 </div>
 						
 						 <div class="span8 ">
 							 <div class="branchTable">描述:</div>
-							 <div ><textarea class="span4" placeholder="在这描述任务" id="branchInfo"></textarea></div>
+							 <div ><textarea class="span4" id="branch.branchInfo" name="branch.branchInfo" placeholder="在这描述任务" id="branchInfo"></textarea></div>
 						 </div>
 						
 						 <div class="span8">
 							 <div class="branchTable">计划时间:</div>
 							 <div class="input-control text datepicker span4" style= "float: left;" id="picker1" data-Role="datepicker" data-param-lang="zh-cn">
-								 <input type="text" id="branchPlay_Time" name="branchPlay_Time" value="" />
+								 <input type="text" id="branchPlay_Time" value="" />
 								 <button onclick="return false;" class="btn-date"></button>
 							 </div>
 						 </div>
@@ -74,11 +74,10 @@
 							</div>
 						</div>			
 					</div >
-					<input type="hidden" id="branch.branchName" name="branch.branchName" value="" />
-					<input type="hidden" id="branch.branchInfo" name="branch.branchInfo" value="" />
 					<input type="hidden" id="branch.play_Time" name="branch.play_Time" value="" />
 					<input type="hidden" id="branch.rank" name="branch.rank" value="" />
 					<input type="hidden" id="branch.uid" name="branch.uid" value="" />
+					<input type="hidden" id="minName" name="minName" value="" />
 				</div>
 			</form>
 		</div>
@@ -93,48 +92,7 @@
 </div>
 <script type="text/javascript">
 	
-	//添加名字
-	var nameStr = valueStr = singleName="";
-	$("#suname").change(function() {
-		var index = this.selectedIndex;
-		singleName=this.children[index].text;
-		$("#"+singleName).show();
-		this.children[index].remove();
-	});
-	//删除名字
-	$(".closeName").click(function() {
-		$(this.parentElement).hide();
-		var uid = this.id;
-		$("#suname").append("<option value='"+uid+"'>"+this.parentElement.id+"</option>");
-		
-	});
-	
-	$("#addTask").click(function() {
-		var _nameshow = $(".nameshow");
-		for(var i=0;i<_nameshow.length;i++){
-			if(_nameshow[i].style.display=="block"){
-				if (valueStr == "") {
-					valueStr += _nameshow[i].children[0].id;
-				} else {
-					valueStr += "," + _nameshow[i].children[0].id;
-				}
-			}
-		}
-		//表单需要提交的内容赋值 
-		$("#user\\.id").val(valueStr);
-		$("#task\\.rank").val($("#rating .rated").length);
-		var playtime = $("#task\\.play_Time").val();
-		playtime = playtime.replace("年", "-");
-		playtime = playtime.replace("月", "-");
-		playtime = playtime.replace("日", "");
-		$("#task\\.play_Time").val(playtime);
-
-		$("#addTaskFrom").submit();
-	});
-	
 	//添加分支模块
-	var branchName="";
-	var branchInfo="";
 	var branchRank="";
 	var branchUid="";
 	var branchPlayTime="";
@@ -157,58 +115,22 @@
 	var afterName="</div></div>";
 	$("#doAddBranch").click(function() {
 		//模块名称加入
-		var minName = beforeName+$("#BranchName").val()+afterName;
-		$("#minBranch").append(minName);
+		var minName = beforeName+$("#branch\\.branchName").val()+afterName;
+		$("#minName").val(minName);
+		
 		var playtime = $("#branchPlay_Time").val();
 		playtime = playtime.replace("年", "-");
 		playtime = playtime.replace("月", "-");
 		playtime = playtime.replace("日", "");
+		$("#branch\\.play_Time").val(playtime);
 		
 		bRank=$("#branchRating .rated").length;
+		$("#branch\\.rank").val(bRank);
 		
-		if(branchName==""||branchName==null){
-			branchName += $("#BranchName").val();
-		}else{
-			branchName += ","+$("#BranchName").val();
-		}
-			
-		if(branchInfo==""||branchInfo==null){
-			branchInfo += $("#branchInfo").val();
-		}else{
-			branchInfo += ","+$("#branchInfo").val();
-		}
+		$("#branch\\.uid").val(userId);
 		
-		if(branchRank==""||branchRank==null){
-			branchRank += bRank;
-		}else{
-			branchRank += ","+bRank;
-		}
-		
-		if(branchPlayTime==""||branchPlayTime==null){
-			branchPlayTime += playtime;
-		}else{
-			branchPlayTime += ","+playtime;
-		}
-		if(branchUid==""||branchUid==null){
-			branchUid += userId;
-		}else{
-			branchUid += ","+userId;
-		}
-		
-		$("#branch\\.branchName").val(branchName);
-		$("#branch\\.branchInfo").val(branchInfo);
-		$("#branch\\.rank").val(branchRank);
-		$("#branch\\.uid").val(branchUid);
-		$("#branch\\.play_Time").val(branchPlayTime);
-
-		
-		$("#branchAll").hide();
+		$("#addBranchFrom").submit();
 	});
-	
-	$("#addBranch").click(function() {
-		$("#branchAll").show();
-	});
-
 </script>
 <jsp:include page="footer.html" flush="true" />
 </body>

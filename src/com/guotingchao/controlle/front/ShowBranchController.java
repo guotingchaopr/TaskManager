@@ -1,6 +1,7 @@
 package com.guotingchao.controlle.front;
 
 
+import com.guotingchao.interceptor.ForntUnameInterceptor;
 import com.guotingchao.interceptor.ForntUrlInterceptor;
 import com.guotingchao.model.impl.Branch;
 import com.jfinal.aop.Before;
@@ -20,6 +21,7 @@ public class ShowBranchController extends Controller{
 	/**
 	 * 任务详细页
 	 */
+	@Before(ForntUnameInterceptor.class)
 	public void index(){
 		Long tid = getParaToLong();
 		setAttr("branch", Branch.branchDao.findBranchInfoBytid(tid));

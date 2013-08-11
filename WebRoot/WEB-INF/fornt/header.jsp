@@ -34,7 +34,7 @@
 				<ul class="menu place-right">
 				
 				<c:choose>
-					<c:when test="${user_info.attrs['uname']==null}">
+					<c:when test="${uname==null}">
 					<li><a href="login"><span class="icon"><i
 								class="icon-user-2"></i></span>登录</a></li>
 					<li><a href="#"><span class="icon"><i
@@ -42,7 +42,7 @@
 					</c:when>
 					<c:otherwise>
 						<li><a href="#"><span class="icon"><i
-								class="icon-user-2"></i></span>${user_info.attrs['uname']}</a></li>
+								class="icon-user-2"></i></span>${uname}</a></li>
 					<li><a href="loginOut"><span class="icon"><i
 								class="icon-accessibility"></i></span> 退出</a></li>
 					</c:otherwise>

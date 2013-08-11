@@ -21,7 +21,7 @@
 	<!-- leftMenu -->
 	<div class="page-sidebar">
 		<ul class="sub-menu light">
-			<c:if test="${user_info.attrs['uname']!=null&&taskListRelative!=null}">
+			<c:if test="${uname!=null&&taskListRelative!=null}">
 				<li class="sticker sticker-color-black" data-for-id="Operate"><a
 				href="#">可操作任务</a></li>
 			</c:if>
@@ -76,7 +76,7 @@
 				<li class="active"><a href="#"><h3>未开始的任务</h3></a>
 					<div>
 						<ul class="listview fluid">
-							<c:if test="${user_info.attrs['uname']!=null}">
+							<c:if test="${uname!=null}">
 							<li class="border-color-blue">
 							<a href="addTask">
 								<div class="title" style="text-align: center;"><b>新建任务</b></div>

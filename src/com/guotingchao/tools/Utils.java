@@ -42,4 +42,9 @@ public class Utils {
 		}
 		return play_time;
     }
+    
+    public static String getCurTime(){
+    	return System.currentTimeMillis()+"";
+    }
+    
 }

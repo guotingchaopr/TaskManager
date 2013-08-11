@@ -319,6 +319,7 @@ hr {
 	float:left; 
 	width: 218px;
 	border: solid 1px #FFF;
+	display: block;
 }
 .namecontrol{
 	float:left !important;
@@ -335,6 +336,7 @@ hr {
 	line-height: 32px !important;
 	min-width: 73px;
 	text-align: center;
+	cursor: pointer;
 }
 }
 .border{
@@ -342,6 +344,6 @@ hr {
 	border-bottom: 0 !important;
 }
 .uname{
-	float: left !important;
-	
+	float: left !important;	
+    margin-left: 7px;
 }

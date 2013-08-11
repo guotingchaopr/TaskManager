@@ -6,6 +6,8 @@ import java.util.Properties;
 
 import com.alibaba.druid.filter.stat.StatFilter;
 import com.alibaba.druid.wall.WallFilter;
+import com.guotingchao.MyPlugin.RedisPlugin;
+import com.guotingchao.handler.RenderTimeHandle;
 import com.guotingchao.model.impl.Branch;
 import com.guotingchao.model.impl.T_user_task;
 import com.guotingchao.model.impl.Task;
@@ -21,6 +23,7 @@ import com.jfinal.config.Routes;
 import com.jfinal.log.Log4jLogger;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.JspRender;
 import com.jfinal.render.ViewType;
@@ -57,6 +60,7 @@ public class BaseConfig extends JFinalConfig {
 	public void configHandler(Handlers me) {
 		//		DruidStatViewHandler dvh = new DruidStatViewHandler("/druid");
 		//		me.add(dvh);
+		me.add(new RenderTimeHandle());
 	}
 	/**
 	 *  添加一个全局的拦截器
@@ -77,11 +81,18 @@ public class BaseConfig extends JFinalConfig {
 		me.add(dp);
 		// ActiveRecordPlugin
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
-		arp.addMapping("Branch", Branch.class);
+		arp.setContainerFactory(new CaseInsensitiveContainerFactory(true));
 		arp.addMapping("User", User.class);
 		arp.addMapping("Task", Task.class); 
 		arp.addMapping("T_user_task", T_user_task.class);
+		arp.addMapping("Branch", Branch.class);
 		me.add(arp);
+		
+		//RedisPlugin
+		RedisPlugin rp = new RedisPlugin(
+				prop.getProperty("redisHost"), Integer.parseInt(prop.getProperty("redisPort")), Integer.parseInt(prop.getProperty("dbIndex")));
+		me.add(rp);
+
 
 	}
 
