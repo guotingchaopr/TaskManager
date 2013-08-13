@@ -116,7 +116,7 @@
 				</div>
 			</form>
 			<form id="addBranchFrom" action="addBranch" method="post">
-				<input type="hidden" id="userId" name="userId" value="" />
+				<input type="hidden" id="userNames" name="userNames" value="" />
 				<input type="hidden" id="taskName" name="taskName" value="" />
 				<input type="hidden" id="taskInfo" name="taskInfo" value="" />
 				<input type="hidden" id="taskRank" name="taskRank" value="" />
@@ -135,14 +135,47 @@
 <script type="text/javascript">
 	$("document").ready(function() {
 		//时间
-		$("#task\\.play_Time").val("${play_Time}");
+		var play_Time = "${play_Time}";
+		
 		//等级
-		var rank = ${rank};
-		for(var a=0;a<rank;a++){
-			$('$("#rating").children()['+a+']').addClass("rated");
+		var rank = "${rank}" == null ?0 : "${rank}";
+		
+		//延时一秒 等插件
+		setTimeout(function(){
+			for(var i =0 ; i< rank; i ++){
+				$("#rating  a:eq("+i+")").attr("class","rated");	
+			}
+			if(play_Time != ""){
+				$("#task\\.play_Time").val(play_Time);	
+			}
+		},1000);
+		
+		
+		//显示人员名程
+		var taskUserNames = "${taskUserNames}";
+		if(taskUserNames!=""){
+			var singleName = taskUserNames.split(",");
+			for(var i = 0; i < singleName.length; i++){
+				$("#"+singleName[i]).show();
+			}
+			
+		}
+		//显示已经添加分支模块的名称
+		var branchBefore ="<div class='branchshow'>"+
+						"<a href='javascript:void(0);' class='icon-cancel-2 closeBranch'></a>"+
+						" <div class='singlename'>";
+		var branchAfter = "</div></div>";
+		var branchName = "${branchName}";
+		if(branchName!=""){
+			var bName = branchName.split(",");
+			for(var i = 0; i < bName.length; i++){
+				$("#minBranch").append(branchBefore+bName[i]+branchAfter);	
+			}
+			
 		}
 		
 	});
+	
 	//添加名字
 	var nameStr = valueStr = singleName="";
 	$("#suname").change(function() {
@@ -184,25 +217,23 @@
 	
 	
 	//添加模块
-	var branchBefore ="<div class='branchshow'>"+
-						"<a href='javascript:void(0);' class='icon-cancel-2 closeBranch'></a>"+
-						" <div class='singlename'>";
-	var branchAfter = "</div></div>";
+	
 
 	$("#addBranch").click(function() {
 		
 		var _nameshow = $(".nameshow");
+		var username = "";
 		for(var i=0;i<_nameshow.length;i++){
 			if(_nameshow[i].style.display=="block"){
-				if (valueStr == "") {
-					valueStr += _nameshow[i].children[0].id;
+				if (username == "") {
+					username += _nameshow[i].id;
 				} else {
-					valueStr += "," + _nameshow[i].children[0].id;
+					username += "," + _nameshow[i].id;
 				}
 			}
 		}
 		//表单需要提交的内容赋值 
-		$("#userId").val(valueStr);
+		$("#userNames").val(username);
 		$("#taskName").val($("#task\\.taskName").val());
 		$("#taskInfo").val($("#task\\.taskInfo").val());
 		$("#taskRank").val($("#rating .rated").length);

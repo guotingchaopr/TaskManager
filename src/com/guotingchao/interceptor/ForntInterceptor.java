@@ -33,6 +33,7 @@ public class ForntInterceptor implements Interceptor {
 			user_info=c.getSessionAttr("user_info");
 		}
 		if(user_info!=null){
+			log.info(user_info);
 			if(jedis.exists(user_info)){
 				try {
 					JSONObject json = new JSONObject(jedis.get(user_info));

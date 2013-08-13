@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,12 +23,11 @@ import com.guotingchao.model.impl.Task;
 import com.guotingchao.model.impl.User;
 import com.guotingchao.tools.Compare;
 import com.guotingchao.tools.Utils;
+import com.guotingchao.validator.front.AddBranchValidate;
 import com.guotingchao.validator.front.AddTaskValidate;
 import com.guotingchao.validator.front.LoginValidate;
 import com.guotingchao.validator.front.UpdateTaskValidate;
 import com.jfinal.aop.Before;
-import com.jfinal.aop.ClearInterceptor;
-import com.jfinal.aop.ClearLayer;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log4jLogger;
 import com.jfinal.log.Logger;
@@ -42,11 +42,11 @@ public class IndexController extends Controller{
 	
 	Logger log= Log4jLogger.getLogger(IndexController.class);
 	Jedis jedis = RedisKit.getJedis();
-	StringBuffer branchStr = new StringBuffer();
+	
 	/**
 	 * 添加分支
 	 */
-	@Before(ForntInterceptor.class)
+	@Before(ForntInterceptor.class)	
 	public void addBranch(){
 		if(getUser("id")!=null){
 			Long uid =Long.parseLong(getUser("id"));
@@ -60,11 +60,175 @@ public class IndexController extends Controller{
 			jedis.set(task_key+"task", task.toJson());
 			setSessionAttr("task", task_key+"task");
 			
-			jedis.set(task_key+"userId", getPara("userId"));
-			setSessionAttr("userId", task_key+"userId");
+			jedis.set(task_key+"userNames", getPara("userNames"));
+			setSessionAttr("taskUserNames", task_key+"userNames");
 		}
 		render("addBranch.jsp");
-		//redirect("addBranch.jsp");
+		
+	}
+	/**
+	 * 添加分支后挑战到任务页面
+	 */
+	@Before(AddBranchValidate.class)
+	public void backTask(){
+		if(getPara("branch.branchName")!=null){
+			if(getUser("id")!=null){
+				String branchStr = "";
+				//判断是否第一次添加分支模块
+				String branch_key = getSessionAttr("branch_key");
+				if(branch_key == null){
+					//第一次创建key值
+					branch_key= Utils.getCurTime()+getUser("id")+"branch_key";
+				}else{
+					//已经添加过  获取添加过的内容
+					if(jedis.exists(branch_key)){
+						branchStr = jedis.get(branch_key);
+						if(!"".equals(branchStr)){
+							branchStr = branchStr.substring(0, branchStr.length()-1);
+						}
+					}
+				}
+				
+				//获取参数并封装json保存到redis
+				Branch branch = new Branch();
+				branch.set("branchName",getPara("branch.branchName"));
+				branch.set("branchInfo",getPara("branch.branchInfo"));
+				branch.set("rank",getPara("branch.rank"));
+				branch.set("play_Time",getPara("branch.play_Time"));
+				branch.set("uid",getPara("branch.uid"));
+				if("".equals(branchStr)){
+					branchStr = "["+branch.toJson()+"]";
+				}else{
+					branchStr += ","+branch.toJson()+"]";
+				}
+				//保存到redis 并保存的session
+				jedis.set(branch_key, branchStr);
+				setSessionAttr("branch_key",branch_key);
+
+				/********单独的保存分支模块的名称********/
+				String branchName = "";
+				String branchName_key = getSessionAttr("branchName_key");
+				if(branchName_key == null){
+					//第一次创建key值
+					branchName_key= Utils.getCurTime()+getUser("id")+"branchName_key";
+				}else{
+					//已经添加过  获取添加过的内容
+					if(jedis.exists(branchName_key)){
+						branchName = jedis.get(branchName_key);
+					}
+				}
+				if("".equals(branchName)){
+					branchName = getPara("branch.branchName");
+				}else{
+					branchName +="," + getPara("branch.branchName");
+				}
+				
+				setAttr("branchName", branchName);
+				jedis.set(branchName_key, branchName);
+				setSessionAttr("branchName_key",branchName_key);
+			}
+		}
+		//获取已经写入任务的信息  
+		String task_key  = getSessionAttr("task");
+		if(task_key!=null){
+			if(jedis.exists(task_key)){
+				try {
+					JSONObject json=  new JSONObject(jedis.get(task_key));
+					setAttr("taskName", json.get("taskname"));
+					setAttr("taskInfo", json.get("taskinfo"));
+					setAttr("play_Time", json.get("play_time"));
+					setAttr("rank", json.get("rank"));
+					
+				}catch(JSONException e){
+					log.error(e.getMessage());
+				}
+			}
+		}
+		//选定的人员
+		String taskUserNames = getSessionAttr("taskUserNames");
+		if(taskUserNames!=null){
+			if(jedis.exists(taskUserNames)){
+				setAttr("taskUserNames", jedis.get(taskUserNames));
+			}
+		}
+		render("addTask.jsp");
+	}
+	/**
+	 * 添加新任务
+	 */
+	@Before(ForntInterceptor.class)
+	public void addTask(){
+		
+		//全部可选人员
+		setSessionAttr("userListSession",User.userDao.findUserList());
+		render("addTask.jsp");
+	}
+	
+	@Before(AddTaskValidate.class)
+	public void doAddTask(){
+		try {
+			//保存新任务
+			Task task =new Task();
+			task.set("taskMaker", getPara("task.taskMaker"));
+			task.set("taskInfo", getPara("task.taskInfo"));
+			task.set("rank", getParaToInt("task.rank"));
+			task.set("taskName", getPara("task.taskName"));
+			task.set("play_Time", Utils.getDate(getPara("task.play_Time"))); 
+			
+			if (task.save()) {
+				//中间表添加内容  批量保存处理
+				List<Model> user_task_list = new ArrayList<Model>();
+				String[] uid = getPara("user.id").split(",");
+				String tid = task.get("id").toString();
+				for(int i=0;i<uid.length;i++){
+					T_user_task temp_user_task = new T_user_task();
+					temp_user_task.set("tid",tid);
+					temp_user_task.set("uid",uid[i]);
+					
+					user_task_list.add(temp_user_task);
+				}
+				//保存中间表
+				log.info("batchSave返回内容="+T_user_task.taskUserDao.batchSave(user_task_list));
+				
+				/*************添加模块*****************/
+				//获取session的branch_key
+				String branch_key = getSessionAttr("branch_key");
+				if(branch_key != null && !"".equals(branch_key)){
+					if(jedis.exists(branch_key)){						
+						String branchStr = jedis.get(branch_key);
+						
+						
+						if(branchStr != null && !"".equals(branchStr)){
+							JSONArray array = new JSONArray(branchStr);
+							//批量保存处理
+							List<Model> branch_list = new ArrayList<Model>();
+							for(int i = 0; i < array.length(); i++){
+								JSONObject json =  array.getJSONObject(i);
+								Branch branch = new Branch();
+								branch.set("tid",tid);
+								branch.set("branchName", json.get("branchname"));
+								branch.set("branchInfo", json.get("branchinfo"));
+								branch.set("play_Time", json.get("play_time"));
+								branch.set("rank", json.get("rank"));
+								branch.set("uid", json.get("uid"));
+								
+								branch_list.add(branch);
+							}
+							if(Branch.branchDao.batchSave(branch_list)){
+								setAttr("add_success_msg", "添加成功");
+							}else{
+								setAttr("add_success_msg", "失败模块未添加");
+							}
+							
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error("添加任务" + getPara("task.taskName")+ "失败,原因：" + e.getMessage());
+			setAttr("add_success_msg", "添加失败");
+		}
+			render("addTask.jsp");
 	}
 	/**
 	 *  主页
@@ -236,127 +400,6 @@ public class IndexController extends Controller{
 		render("updateTask.jsp");
 	}
 	
-	/**
-	 * 添加新任务
-	 */
-	@Before(ForntInterceptor.class)
-	public void addTask(){
-		if(getPara("branch.branchName")!=null){
-			if(getUser("id")!=null){
-				String branch_key = Utils.getCurTime()+getUser("id");
-				Branch branch = new Branch();
-				branch.set("branchName",getPara("branch.branchName"));
-				branch.set("branchInfo",getPara("branch.Info"));
-				branch.set("rank",getPara("branchRank"));
-				branch.set("play_Time",getPara("branch.play_Time"));
-				if(branchStr.toString()==""||branchStr==null){
-					branchStr.append(branch.toJson());
-				}else{
-					branchStr.append(","+branch.toJson());
-				}
-				
-				jedis.set(branch_key, "["+branchStr.toString()+"]");
-				setSessionAttr("branch_key",branch_key);
-			}
-		}
-		
-		String task_key  = getSessionAttr("task");
-		if(task_key!=null){
-			if(jedis.exists(task_key)){
-				try {
-					JSONObject json = new JSONObject(jedis.get(task_key));
-					setAttr("taskName", json.get("taskname"));
-					setAttr("taskInfo", json.get("taskinfo"));
-					setAttr("play_Time", json.get("play_time"));
-					setAttr("rank", json.get("rank"));
-				}catch(JSONException e){
-					log.error(e.getMessage());
-				}
-			}
-		}
-		setSessionAttr("userListSession",User.userDao.findUserList());
-		render("addTask.jsp");
-	}
-	
-	@Before(AddTaskValidate.class)
-	public void doAddTask(){
-		try {
-			//保存新任务
-			Task task =new Task();
-			task.set("taskMaker", getPara("task.taskMaker"));
-			task.set("taskInfo", getPara("task.taskInfo"));
-			task.set("rank", getParaToInt("task.rank"));
-			task.set("taskName", getPara("task.taskName"));
-			task.set("play_Time", Utils.getDate(getPara("task.play_Time"))); 
-			
-			if (task.save()) {
-				//中间表添加内容  批量保存处理
-				List<Model> user_task_list = new ArrayList<Model>();
-				String[] uid = getPara("user.id").split(",");
-				String tid = task.get("id").toString();
-				for(int i=0;i<uid.length;i++){
-					T_user_task temp_user_task = new T_user_task();
-					temp_user_task.set("tid",tid);
-					temp_user_task.set("uid",uid[i]);
-					
-					user_task_list.add(temp_user_task);
-				}
-				T_user_task.taskUserDao.batchSave(user_task_list);
-				
-				//添加模块
-				String bName = getPara("branch.branchName");
-				int temp = bName.split(",").length;
-				if(bName!=null && "".equals("")){
-					
-					if(temp>1){
-						String bNames[] = bName.split(",");
-						String bInfo[] = getPara("branch.branchInfo").split(",");
-						String bPlay_Time[] = getPara("branch.play_Time").split(",");
-						String bRank[] = getPara("branch.rank").split(",");
-						String bUid[] = getPara("branch.uid").split(",");
-						//批量保存处理
-						List<Model> branch_list = new ArrayList<Model>();
-						for(int i=0;i<temp;i++){
-							Branch branch = new Branch();
-							branch.set("tid",tid);
-							branch.set("branchName", bNames[i]);
-							branch.set("branchInfo", bInfo[i]);
-							branch.set("play_Time", bPlay_Time[i]);
-							branch.set("rank", bRank[i]);
-							branch.set("uid", bUid[i]);
-							
-							branch_list.add(branch);
-						}
-						if(Branch.branchDao.batchSave(branch_list)){
-							setAttr("add_success_msg", "添加成功");
-						}else{
-							setAttr("add_success_msg", "失败模块未添加");
-						}
-					}else{
-						Branch branch = new Branch();
-						branch.set("tid",tid);
-						branch.set("branchName", bName);
-						branch.set("branchInfo", getPara("branch.branchInfo"));
-						branch.set("play_Time", Utils.getDate(getPara("branch.play_Time")));
-						branch.set("rank", getPara("branch.rank"));
-						branch.set("uid", getPara("branch.uid"));
-						if(branch.save()){
-							setAttr("add_success_msg", "添加成功");
-						}else{
-							setAttr("add_success_msg", "失败模块未添加");
-						}
-					}
-				}
-				
-				
-				
-			}
-		} catch (Exception e) {
-			log.error("添加任务" + getPara("task.taskName")+ "失败,原因：" + e.getMessage());
-			setAttr("add_success_msg", "添加失败");
-		}
-			render("addTask.jsp");
-	}
 	
 	/**
 	 * 登录
@@ -380,8 +423,13 @@ public class IndexController extends Controller{
 		String user_info = getCookie("user_info");
 		if(user_info==null){
 			user_info = getSessionAttr("user_info");
+			if(user_info!=null){
+				if(jedis.exists(user_info)){
+					jedis.del(user_info);
+				}
+			}
 		}
-		jedis.del(user_info);
+		
 		removeSessionAttr("user_info");
 		removeCookie("user_info");
 		removeSessionAttr("actionKey");

@@ -304,6 +304,11 @@ hr {
 	color: #BBB;
 	float: right;
 }
+.icon-cancel-2.closeBranch{
+	font-size: 10px;
+	color: #BBB;
+	float: right;
+}
 .singlename{
 	line-height: 28px !important;
 }

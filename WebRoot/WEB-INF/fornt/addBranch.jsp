@@ -23,14 +23,17 @@
 	<!-- end Header -->
 	<div class="page-region">
 		<div class="page-region-content">
-			<form id="addBranchFrom" action="addTask" method="post">
+			<form id="addBranchFrom" action="backTask" method="post">
 				<div class="row">
 					<div class="border-color-blue span8" id="branchAll">
 						<div class="span8 branchTitle">
 						<b>任务模块</b> </div>
 					 	<div class="span8">
 						 <div class="branchTable">名称:</div>
-							 <div ><input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" /></div>
+							 <div >
+							 	<input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" />
+							 	<span class="fg-color-red" >${branchName_error}</span>
+							 </div>
 						 </div>
 						
 						 <div class="span8 ">
@@ -67,6 +70,7 @@
 										</c:forEach>
 								</select>
 							</div>
+							<span class="fg-color-red">${uid_error}</span>
 						</div>
 						<div class="span8">
 							<div class="span8" style="text-align: center;">
