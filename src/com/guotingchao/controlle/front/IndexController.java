@@ -134,9 +134,9 @@ public class IndexController extends Controller{
 			if(jedis.exists(task_key)){
 				try {
 					JSONObject json=  new JSONObject(jedis.get(task_key));
-					setAttr("taskName", json.get("taskname"));
-					setAttr("taskInfo", json.get("taskinfo"));
-					setAttr("play_Time", json.get("play_time"));
+					setAttr("taskName", json.get("taskName"));
+					setAttr("taskInfo", json.get("taskInfo"));
+					setAttr("play_Time", json.get("play_Time"));
 					setAttr("rank", json.get("rank"));
 					
 				}catch(JSONException e){
@@ -206,9 +206,9 @@ public class IndexController extends Controller{
 								JSONObject json =  array.getJSONObject(i);
 								Branch branch = new Branch();
 								branch.set("tid",tid);
-								branch.set("branchName", json.get("branchname"));
-								branch.set("branchInfo", json.get("branchinfo"));
-								branch.set("play_Time", json.get("play_time"));
+								branch.set("branchName", json.get("branchName"));
+								branch.set("branchInfo", json.get("branchInfo"));
+								branch.set("play_Time", json.get("play_Time"));
 								branch.set("rank", json.get("rank"));
 								branch.set("uid", json.get("uid"));
 								

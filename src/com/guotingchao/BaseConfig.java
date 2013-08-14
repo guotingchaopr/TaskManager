@@ -81,7 +81,8 @@ public class BaseConfig extends JFinalConfig {
 		me.add(dp);
 		// ActiveRecordPlugin
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
-		arp.setContainerFactory(new CaseInsensitiveContainerFactory(true));
+		//设置大小写   小写
+		//arp.setContainerFactory(new CaseInsensitiveContainerFactory(true));
 		arp.addMapping("User", User.class);
 		arp.addMapping("Task", Task.class); 
 		arp.addMapping("T_user_task", T_user_task.class);

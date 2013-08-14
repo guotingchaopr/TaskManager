@@ -39,7 +39,7 @@
 	<div class="page-region">
 		<!-- 可操作任务 -->
 		<div class="page-region-content" id="Operate" style="display: none">
-		<button class="bg-color-blue"  id="updateTask">更新</button>	
+		<button class="bg-color-blue"  id="updateTask" style="display: none;">更新</button>	
 			<ul class="accordion" data-role="accordion">
 				<li class="active"><a href="#"><h3>可操做的任务</h3></a> 
 					<div id="OperateTask">
@@ -241,7 +241,7 @@ function toPlace(location){
 			}
 			this.className="selected";
 			tid=this.value;
-			$("#updateTask").className="button";
+			$("#updateTask").show();
 		});
 		
 		
