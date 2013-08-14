@@ -18,7 +18,7 @@ public interface ITaskDao{
 	 * @param taskType
 	 * @return List
 	 */
-	public Page<Task> findTaskListByType(int taskType);
+	public List<Task> findTaskListByType(int taskType);
 	
 	/**
 	 * 通过id获取task
@@ -33,4 +33,10 @@ public interface ITaskDao{
 	 * @return
 	 */
 	public List<Task> findTaskByUser(String uname);
+//	/**
+//	 * 通过tid获取子任务
+//	 * @param tid
+//	 * @return
+//	 */
+//	public List<Task> findChildTask(Long tid);
 }

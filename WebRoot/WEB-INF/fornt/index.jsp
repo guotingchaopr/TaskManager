@@ -21,7 +21,7 @@
 	<!-- leftMenu -->
 	<div class="page-sidebar">
 		<ul class="sub-menu light">
-			<c:if test="${user_info.attrs['uname']!=null&&taskListRelative!=null}">
+			<c:if test="${uname!=null&&taskListRelative!=null}">
 				<li class="sticker sticker-color-black" data-for-id="Operate"><a
 				href="#">可操作任务</a></li>
 			</c:if>
@@ -39,7 +39,7 @@
 	<div class="page-region">
 		<!-- 可操作任务 -->
 		<div class="page-region-content" id="Operate" style="display: none">
-		<button class="bg-color-blue"  id="updateTask">更新</button>	
+		<button class="bg-color-blue"  id="updateTask" style="display: none;">更新</button>	
 			<ul class="accordion" data-role="accordion">
 				<li class="active"><a href="#"><h3>可操做的任务</h3></a> 
 					<div id="OperateTask">
@@ -48,16 +48,16 @@
 							<c:forEach items="${taskListRelative}" var="task">
 								<li class="border-color-blue" value="${task.id}" >
 									<div class="Operate">任务名称：${task.taskName}</div>
-									<div class="time">任务时间：${task.creat_Time}</div>
+									<div class="time">任务时间：${task.create_Time}</div>
 									<div>
 										任务描述：
 										<blockquote>${task.taskInfo}</blockquote>
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 											<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a>${task.taskMaker}</a></strong>
@@ -76,7 +76,7 @@
 				<li class="active"><a href="#"><h3>未开始的任务</h3></a>
 					<div>
 						<ul class="listview fluid">
-							<c:if test="${user_info.attrs['uname']!=null}">
+							<c:if test="${uname!=null}">
 							<li class="border-color-blue">
 							<a href="addTask">
 								<div class="title" style="text-align: center;"><b>新建任务</b></div>
@@ -95,9 +95,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 											<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a>${task.taskMaker}</a></strong>
@@ -106,12 +106,12 @@
 								</li>
 							</c:forEach>
 						</ul>
-						<div class="span8" style="text-align: center;">
+						<!-- div class="span8" style="text-align: center;">
 							当前第<span id="pagCurrent">1</span>页,共<span id="pagTotal">${totalPage}</span>页,跳转至<input style="width: 20px;" type="text" name="pagNo" id="pagNo"></input>页
 							<button id="upPage" disabled>上一页</button>
 							<button id="downPage">下一页</button>
 							
-						</div>
+						</div -->
 					</div></li>
 			</ul>
 		</div>
@@ -132,9 +132,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 												<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a>${task.taskMaker}</a></strong>
@@ -189,9 +189,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 											<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a class="fg-color-white">${task.taskMaker}</a></strong>
@@ -241,7 +241,7 @@ function toPlace(location){
 			}
 			this.className="selected";
 			tid=this.value;
-			$("#updateTask").className="button";
+			$("#updateTask").show();
 		});
 		
 		

@@ -72,14 +72,14 @@
 						<tr>
 							<td>当前进度：</td>
 							<td><input type="hidden"
-								id="task.taskPercent" name="task.taskPercent" />
+								id="task.percent" name="task.percent" />
 								<div class="span4">
 								<div class="span3">
-								<div class="slider taskupdate" data-param-init-value="${task.taskPercent}"></div>
+								<div class="slider taskupdate" data-param-init-value="${task.percent}"></div>
 								
 								</div>
 								<div class="offset3 bg-color-blue updateTask">
-								<span id="slider_val">${task.taskPercent}%</span>
+								<span id="slider_val">${task.percent}%</span>
 								</div>
 								</div>
 							</td>
@@ -244,9 +244,9 @@ $("document").ready(function(){
 	$("#updateTask").click(function() {
 		
 		//任务等级
-		$("#task\\.rank").val($("#rating .rated").length);
+		$("#task\\.rank").val($(".rating .rated").length);
 		var percentStr = $("#slider_val").html();
-		$("#task\\.taskPercent").val(percentStr.substring(0,percentStr.length-1));
+		$("#task\\.percent").val(percentStr.substring(0,percentStr.length-1));
 		//获取用户id
 		var valueStr = "";
 		for(var i=0;i<s1[0].options.length;i++){

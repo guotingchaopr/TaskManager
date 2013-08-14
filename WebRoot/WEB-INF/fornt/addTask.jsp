@@ -16,7 +16,7 @@
 	<div class="page-header">
 		<div class="page-header-content">
 			<h1>
-				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>新任务<small>添加</small>
+				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>添加<small>新任务</small>
 			</h1>
 		</div>
 	</div>
@@ -25,10 +25,10 @@
 		<div class="page-region-content">
 			<form id="addTaskFrom" action="doAddTask" method="post">
 				<div class="row">
-					<table class="span8">
+					<table class="span8 border">
 						<tr>
 							<td>派发人:</td>
-							<td><input class="span4" type="text" id="task.taskMaker" value="${user_info.attrs['uname']}" readonly  value="" name="task.taskMaker" /></td>
+							<td><input class="span4" type="text" id="task.taskMaker" value="${uname}" readonly  value="" name="task.taskMaker" /></td>
 						</tr>
 						<tr>
 							<td>任务名称:</td>
@@ -36,7 +36,7 @@
 								<div class="input-control text span4">
 									<span class="fg-color-red" >${taskName_error}</span>
 									<input type="text" id="task.taskName" placeholder="请输入名称"
-										name="task.taskName" value="" />
+										name="task.taskName" value="${taskName}" />
 									<button class="btn-clear"  type="button"></button>
 								</div> 
 								
@@ -47,7 +47,7 @@
 							<td>
 								<div class="input-control textarea span4">
 									<textarea placeholder="在这描述任务" id="task.taskInfo"
-										name="task.taskInfo"></textarea>
+										name="task.taskInfo">${taskInfo}</textarea>
 								</div>
 							</td>
 						</tr>
@@ -77,14 +77,35 @@
 						</tr>
 						<tr>
 							<td>指定人：</td>
-							<td><input type="text"
-								id="username" readonly class="span3"/> <select id="suname">
-									<option>请选择</option>
+							<td>
+							<div class="span4">
+								<div id="username" class="span3 namecontrol" >
 									<c:forEach items="${userListSession}" var="user">
-										<option value="${user.attrs['id']}">${user.attrs['uname']}</option>
+									<div class="nameshow" id="${user.attrs['uname']}" >
+									<a href="javascript:void(0);" class="icon-cancel-2 closeName" id="${user.attrs['id']}"></a>
+									 <div class="singlename">${user.attrs['uname']}</div>
+									</div>
 									</c:forEach>
-							</select> <input type="hidden" name="user.id" id="user.id" value="" /> <span
-								class="fg-color-red">${uid_error}</span></td>
+								</div>
+							    <div class="span1 uname">
+								    <select id="suname">
+											<option>请选择</option>
+											<c:forEach items="${userListSession}" var="user">
+												<option value="${user.attrs['id']}">${user.attrs['uname']}</option>
+											</c:forEach>
+									</select> 
+								</div>
+							</div>
+							<div class="float:left;"><span class="fg-color-red">${uid_error}</span></div>
+							<input type="hidden" name="user.id" id="user.id" value="" /> </td>
+						</tr>
+							<tr id="modelName" >
+							<td>模块：</td>
+							<td>
+								<div class="span3 namecontrol" id="minBranch">
+								</div>
+								<div class="span1 addBranch" id="addBranch">添加模块 </div>
+							</td>
 						</tr>
 						<tr>
 							<td colspan='2' style="text-align: center;"><input
@@ -93,7 +114,13 @@
 						</tr>
 					</table>
 				</div>
-
+			</form>
+			<form id="addBranchFrom" action="addBranch" method="post">
+				<input type="hidden" id="userNames" name="userNames" value="" />
+				<input type="hidden" id="taskName" name="taskName" value="" />
+				<input type="hidden" id="taskInfo" name="taskInfo" value="" />
+				<input type="hidden" id="taskRank" name="taskRank" value="" />
+				<input type="hidden" id="taskPlayTime" name="taskPlayTime" value="${play_Time}" />
 			</form>
 		</div>
 	</div>
@@ -106,21 +133,78 @@
 	</c:if>
 </div>
 <script type="text/javascript">
-	var nameStr = valueStr = "";
+	$("document").ready(function() {
+		//时间
+		var play_Time = "${play_Time}";
+		
+		//等级
+		var rank = "${rank}" == null ?0 : "${rank}";
+		
+		//延时一秒 等插件
+		setTimeout(function(){
+			for(var i =0 ; i< rank; i ++){
+				$("#rating  a:eq("+i+")").attr("class","rated");	
+			}
+			if(play_Time != ""){
+				$("#task\\.play_Time").val(play_Time);	
+			}
+		},1000);
+		
+		
+		//显示人员名程
+		var taskUserNames = "${taskUserNames}";
+		if(taskUserNames!=""){
+			var singleName = taskUserNames.split(",");
+			for(var i = 0; i < singleName.length; i++){
+				$("#"+singleName[i]).show();
+			}
+			
+		}
+		//显示已经添加分支模块的名称
+		var branchBefore ="<div class='branchshow'>"+
+						"<a href='javascript:void(0);' class='icon-cancel-2 closeBranch'></a>"+
+						" <div class='singlename'>";
+		var branchAfter = "</div></div>";
+		var branchName = "${branchName}";
+		if(branchName!=""){
+			var bName = branchName.split(",");
+			for(var i = 0; i < bName.length; i++){
+				$("#minBranch").append(branchBefore+bName[i]+branchAfter);	
+			}
+			
+		}
+		
+	});
+	
+	//添加名字
+	var nameStr = valueStr = singleName="";
 	$("#suname").change(function() {
 		var index = this.selectedIndex;
-		nameStr += this.children[index].text + " ";
-		if (valueStr == "") {
-			valueStr += this.value;
-		} else {
-			valueStr += "," + this.value;
-		}
-		$("#user\\.id").val(valueStr);
-		$("#username").val(nameStr);
+		singleName=this.children[index].text;
+		$("#"+singleName).show();
 		this.children[index].remove();
 	});
-
+	//删除名字
+	$(".closeName").click(function() {
+		$(this.parentElement).hide();
+		var uid = this.id;
+		$("#suname").append("<option value='"+uid+"'>"+this.parentElement.id+"</option>");
+		
+	});
+	
 	$("#addTask").click(function() {
+		var _nameshow = $(".nameshow");
+		for(var i=0;i<_nameshow.length;i++){
+			if(_nameshow[i].style.display=="block"){
+				if (valueStr == "") {
+					valueStr += _nameshow[i].children[0].id;
+				} else {
+					valueStr += "," + _nameshow[i].children[0].id;
+				}
+			}
+		}
+		//表单需要提交的内容赋值 
+		$("#user\\.id").val(valueStr);
 		$("#task\\.rank").val($("#rating .rated").length);
 		var playtime = $("#task\\.play_Time").val();
 		playtime = playtime.replace("年", "-");
@@ -129,6 +213,38 @@
 		$("#task\\.play_Time").val(playtime);
 
 		$("#addTaskFrom").submit();
+	});
+	
+	
+	//添加模块
+	
+
+	$("#addBranch").click(function() {
+		
+		var _nameshow = $(".nameshow");
+		var username = "";
+		for(var i=0;i<_nameshow.length;i++){
+			if(_nameshow[i].style.display=="block"){
+				if (username == "") {
+					username += _nameshow[i].id;
+				} else {
+					username += "," + _nameshow[i].id;
+				}
+			}
+		}
+		//表单需要提交的内容赋值 
+		$("#userNames").val(username);
+		$("#taskName").val($("#task\\.taskName").val());
+		$("#taskInfo").val($("#task\\.taskInfo").val());
+		$("#taskRank").val($("#rating .rated").length);
+		var playtime = $("#task\\.play_Time").val();
+		playtime = playtime.replace("年", "-");
+		playtime = playtime.replace("月", "-");
+		playtime = playtime.replace("日", "");
+		$("#taskPlayTime").val(playtime);
+
+		$("#addBranchFrom").submit();
+	
 	});
 
 </script>

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50022
 File Encoding         : 65001
 
-Date: 2013-07-15 23:07:14
+Date: 2013-07-25 00:07:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -55,6 +55,6 @@ INSERT INTO `t_user_task` VALUES ('145', '155', '9', '-1');
 INSERT INTO `t_user_task` VALUES ('146', '155', '6', '-1');
 INSERT INTO `t_user_task` VALUES ('147', '6', '10', '-1');
 INSERT INTO `t_user_task` VALUES ('148', '6', '12', '-1');
-INSERT INTO `t_user_task` VALUES ('149', '157', '7', '0');
-INSERT INTO `t_user_task` VALUES ('150', '157', '12', '0');
-INSERT INTO `t_user_task` VALUES ('151', '157', '10', '0');
+INSERT INTO `t_user_task` VALUES ('149', '157', '7', '-1');
+INSERT INTO `t_user_task` VALUES ('150', '157', '12', '-1');
+INSERT INTO `t_user_task` VALUES ('151', '157', '10', '-1');
