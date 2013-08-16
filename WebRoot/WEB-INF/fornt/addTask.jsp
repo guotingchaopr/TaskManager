@@ -11,139 +11,243 @@
 <!--  header-->
 <jsp:include page="header.jsp" flush="true" />
 <!-- header End -->
-<div class="page secondary">
+<div class="page with-sidebar">
 	<!-- header -->
 	<div class="page-header">
 		<div class="page-header-content">
 			<h1>
-				<i class="icon-arrow-down-3 fg-color-red"></i>添加新任务
+				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>添加<small>新任务</small>
 			</h1>
 		</div>
 	</div>
+	<!-- end Header -->
 	<div class="page-region">
 		<div class="page-region-content">
-			<form id="addTaskFrom" action="addTask/doAdd" method="post">
-			<div>
-				<table>
-					<tr>
-						<td style="text-align: right;">派发人:</td>
-						<td style="text-align: left;">
-						<input type="text" id="task.taskMaker" value="${user_info.attrs['uname']}" readonly
-							class="span4" value="" name="task.taskMaker" />
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;">任务名称:</td>
-						<td style="text-align: left;">
-							<div class="input-control text span4">
-								<input type="text" id="task.taskName" placeholder="请输入名称" name="task.taskName" value=""/>
-								<button class="btn-clear" tabindex="-1" type="button"></button>
+			<form id="addTaskFrom" action="doAddTask" method="post">
+				<div class="row">
+					<table class="span8 border">
+						<tr>
+							<td>派发人:</td>
+							<td><input class="span4" type="text" id="task.taskMaker" value="${uname}" readonly  value="" name="task.taskMaker" /></td>
+						</tr>
+						<tr>
+							<td>任务名称:</td>
+							<td>
+								<div class="input-control text span4">
+									<span class="fg-color-red" >${taskName_error}</span>
+									<input type="text" id="task.taskName" placeholder="请输入名称"
+										name="task.taskName" value="${taskName}" />
+									<button class="btn-clear"  type="button"></button>
+								</div> 
+								
+							</td>
+						</tr>
+						<tr>
+							<td>任务描述：</td>
+							<td>
+								<div class="input-control textarea span4">
+									<textarea placeholder="在这描述任务" id="task.taskInfo"
+										name="task.taskInfo">${taskInfo}</textarea>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>计划时间：</td>
+							<td>
+								<div class="input-control text datepicker span4" id="picker1"
+									data-Role="datepicker" data-param-lang="zh-cn">
+									<input type="text" id="task.play_Time" name="task.play_Time"
+										value="" />
+									<button onclick="return false;" class="btn-date"></button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>重要指数：</td>
+							<td><input type="hidden"
+								id="task.rank" name="task.rank" />
+								<div class="rating" data-role="rating" id="rating">
+									<a href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a>
+								</div></td>
+						</tr>
+						<tr>
+							<td>指定人：</td>
+							<td>
+							<div class="span4">
+								<div id="username" class="span3 namecontrol" >
+									<c:forEach items="${userListSession}" var="user">
+									<div class="nameshow" id="${user.attrs['uname']}" >
+									<a href="javascript:void(0);" class="icon-cancel-2 closeName" id="${user.attrs['id']}"></a>
+									 <div class="singlename">${user.attrs['uname']}</div>
+									</div>
+									</c:forEach>
+								</div>
+							    <div class="span1 uname">
+								    <select id="suname">
+											<option>请选择</option>
+											<c:forEach items="${userListSession}" var="user">
+												<option value="${user.attrs['id']}">${user.attrs['uname']}</option>
+											</c:forEach>
+									</select> 
+								</div>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;">任务描述：</td>
-						<td style="text-align: left;">
-							<div class="input-control textarea span4">
-								<textarea placeholder="在这描述任务" id="task.taskInfo" name="task.taskInfo"></textarea>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;">计划时间：</td>
-						<td style="text-align: left;">
-							<input type="hidden" id="task.play_Time" name="task.play_Time" value=""/>
-							<div class="input-control text datepicker span4" id="picker1"
-								data-param-lang="zh-cn">
-								<input type="text" id="playTime"  value=""/>
-								<button class="btn-date"></button>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;">重要指数：</td>
-						<td style="text-align: left;">
-							<input type="hidden" id="task.rank" name="task.rank"/>
-							<div class="rating" date-role="rating" id="rating">
-								<a href="javascript:void(0)" class=""></a> <a
-									href="javascript:void(0)" class=""></a> <a
-									href="javascript:void(0)" class=""></a> <a
-									href="javascript:void(0)" class=""></a> <a
-									href="javascript:void(0)" class=""></a> <a
-									href="javascript:void(0)" class=""></a>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;">指定人：</td>
-						<td style="text-align: left;">
-						<input type="text" id="username" /> 
-						<select id="suname">
-								<option>请选择</option>
-								<c:forEach items="${userList}" var="user">
-									<option value="${user.id}">${user.uname }</option>
-								</c:forEach>
-						</select>
-						<input type="hidden" name="user.id" id="user.id"  value=""  />
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right;"><input type="button"
-							id="addTask" value="添加" /></td>
-						<td style="text-align: left;"><input type="button" value="取消"
-							onclick="javascript:window.history.go(-1)" /></td>
-					</tr>
-
-				</table>
-				<c:if test="${taskName_error!=null || uid_error!=null}">				
-					<div class="notices">
-						<div class="bg-color-yellow">
-							<a href="javascript:void(0);" class="close"></a>
-							<div class="notice-text">
-								<small class="fg-color-red">${taskName_error}</small><br/>
-								<small class="fg-color-red">${uid_error}</small><br/>
-							</div>
-						</div>
-					</div>
-				</c:if>
-			</div>
-			
-		</form>
+							<div class="float:left;"><span class="fg-color-red">${uid_error}</span></div>
+							<input type="hidden" name="user.id" id="user.id" value="" /> </td>
+						</tr>
+							<tr id="modelName" >
+							<td>模块：</td>
+							<td>
+								<div class="span3 namecontrol" id="minBranch">
+								</div>
+								<div class="span1 addBranch" id="addBranch">添加模块 </div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan='2' style="text-align: center;"><input
+								type="button" id="addTask" value="添加" /> <input type="button"
+								value="返回" onclick="javascript:window.history.go(-1)" /></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+			<form id="addBranchFrom" action="addBranch" method="post">
+				<input type="hidden" id="userNames" name="userNames" value="" />
+				<input type="hidden" id="taskName" name="taskName" value="" />
+				<input type="hidden" id="taskInfo" name="taskInfo" value="" />
+				<input type="hidden" id="taskRank" name="taskRank" value="" />
+				<input type="hidden" id="taskPlayTime" name="taskPlayTime" value="${play_Time}" />
+			</form>
 		</div>
 	</div>
+	<c:if test="${add_success_msg != null}">
+			<div class="page-footer">
+				<div class="pushResult message-dialog bg-color-green">
+					<h3 class="fg-color-white padding30">${add_success_msg}</h3>
+				</div>
+			</div>
+	</c:if>
 </div>
-<jsp:include page="footer.html" flush="true" />
 <script type="text/javascript">
-
-		var nameStr=valueStr = "";
-		$("#suname").change(function() {
-			var index = this.selectedIndex;
-			nameStr += this.children[index].text + " ";
-			if(valueStr==""){
-				valueStr+= this.value ;
-			}else{
-				valueStr+= ","+this.value; 
+	$("document").ready(function() {
+		//时间
+		var play_Time = "${play_Time}";
+		
+		//等级
+		var rank = "${rank}" == null ?0 : "${rank}";
+		
+		//延时一秒 等插件
+		setTimeout(function(){
+			for(var i =0 ; i< rank; i ++){
+				$("#rating  a:eq("+i+")").attr("class","rated");	
 			}
-			$("#user\\.id").val(valueStr);
-			$("#username").val(nameStr);
-			this.children[index].remove();
-		});
+			if(play_Time != ""){
+				$("#task\\.play_Time").val(play_Time);	
+			}
+		},1000);
 		
-		$("#addTask").click(function() {
-			$("#task\\.rank").val($("#rating .rated").length);
-			var playtime = $("#playTime").val();
-			playtime=playtime.replace("年","-");
-			playtime=playtime.replace("月", "-");
-			playtime=playtime.replace("日", "");
-			$("#task\\.play_Time").val(playtime);
-			$("#addTaskFrom").submit();
-		});
 		
-		$(".close").click(function(){
-			$(this).parent().parent().hide();
-		});
+		//显示人员名程
+		var taskUserNames = "${taskUserNames}";
+		if(taskUserNames!=""){
+			var singleName = taskUserNames.split(",");
+			for(var i = 0; i < singleName.length; i++){
+				$("#"+singleName[i]).show();
+			}
+			
+		}
+		//显示已经添加分支模块的名称
+		var branchBefore ="<div class='branchshow'>"+
+						"<a href='javascript:void(0);' class='icon-cancel-2 closeBranch'></a>"+
+						" <div class='singlename'>";
+		var branchAfter = "</div></div>";
+		var branchName = "${branchName}";
+		if(branchName!=""){
+			var bName = branchName.split(",");
+			for(var i = 0; i < bName.length; i++){
+				$("#minBranch").append(branchBefore+bName[i]+branchAfter);	
+			}
+			
+		}
+		
+	});
 	
-</script>
+	//添加名字
+	var nameStr = valueStr = singleName="";
+	$("#suname").change(function() {
+		var index = this.selectedIndex;
+		singleName=this.children[index].text;
+		$("#"+singleName).show();
+		this.children[index].remove();
+	});
+	//删除名字
+	$(".closeName").click(function() {
+		$(this.parentElement).hide();
+		var uid = this.id;
+		$("#suname").append("<option value='"+uid+"'>"+this.parentElement.id+"</option>");
+		
+	});
+	
+	$("#addTask").click(function() {
+		var _nameshow = $(".nameshow");
+		for(var i=0;i<_nameshow.length;i++){
+			if(_nameshow[i].style.display=="block"){
+				if (valueStr == "") {
+					valueStr += _nameshow[i].children[0].id;
+				} else {
+					valueStr += "," + _nameshow[i].children[0].id;
+				}
+			}
+		}
+		//表单需要提交的内容赋值 
+		$("#user\\.id").val(valueStr);
+		$("#task\\.rank").val($("#rating .rated").length);
+		var playtime = $("#task\\.play_Time").val();
+		playtime = playtime.replace("年", "-");
+		playtime = playtime.replace("月", "-");
+		playtime = playtime.replace("日", "");
+		$("#task\\.play_Time").val(playtime);
 
+		$("#addTaskFrom").submit();
+	});
+	
+	
+	//添加模块
+	
+
+	$("#addBranch").click(function() {
+		
+		var _nameshow = $(".nameshow");
+		var username = "";
+		for(var i=0;i<_nameshow.length;i++){
+			if(_nameshow[i].style.display=="block"){
+				if (username == "") {
+					username += _nameshow[i].id;
+				} else {
+					username += "," + _nameshow[i].id;
+				}
+			}
+		}
+		//表单需要提交的内容赋值 
+		$("#userNames").val(username);
+		$("#taskName").val($("#task\\.taskName").val());
+		$("#taskInfo").val($("#task\\.taskInfo").val());
+		$("#taskRank").val($("#rating .rated").length);
+		var playtime = $("#task\\.play_Time").val();
+		playtime = playtime.replace("年", "-");
+		playtime = playtime.replace("月", "-");
+		playtime = playtime.replace("日", "");
+		$("#taskPlayTime").val(playtime);
+
+		$("#addBranchFrom").submit();
+	
+	});
+
+</script>
+<jsp:include page="footer.html" flush="true" />
 </body>
 </html>

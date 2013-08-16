@@ -5,22 +5,22 @@ import com.jfinal.log.Log4jLogger;
 import com.jfinal.log.Logger;
 import com.jfinal.validate.Validator;
 /**
- * 添加任务验证
+ * 添加分支模块验证
  * @author os-yugq
  *
  */
-public class AddTaskValidate extends Validator{
-	Logger log = Log4jLogger.getLogger(AddTaskValidate.class);
+public class AddBranchValidate extends Validator{
+	Logger log = Log4jLogger.getLogger(AddBranchValidate.class);
 	@Override
 	protected void handleError(Controller c) {
 		c.keepModel(User.class);
-		c.render("addTask.jsp");
+		c.render("addBranch.jsp");
 	}
 
 	@Override
 	protected void validate(Controller c) {
-		validateRequired("task.taskName", "taskName_error", "*请输入任务名称");
-		validateRequired("user.id", "uid_error", "*请选择指定人");
+		validateRequired("branch.branchName", "branchName_error", "*请输入任务名称");
+		validateRequired("branch.uid", "uid_error", "*请选择指定人");
 	}
 	
 }

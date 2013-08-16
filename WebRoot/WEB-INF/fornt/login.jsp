@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="./css/modern.css" />
 <link href="./css/modern-responsive.css" rel="stylesheet">
 <link rel="stylesheet" href="./css/theme-dark.css" />
+<script type="text/javascript" src="./js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="./js/angular.js"></script>
 <style type="text/css">
 .metrouicss {
 	background-color: rgb(0, 125, 266);
@@ -71,7 +73,7 @@
 	<div id="pwordbox">
 		<div id="imgcont"></div>
 		<div id="fieldcont">
-			<form id="loginFrom" action="login/doLogin" method="post">
+			<form id="loginFrom" action="doLogin" method="post">
 				<div id="pboxcont">
 					<h1 style="color: white;">&lt;User&gt;</h1>
 					<div class="input-control text span4" id="pworddiv">

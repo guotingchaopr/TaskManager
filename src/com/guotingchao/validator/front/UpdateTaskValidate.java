@@ -5,16 +5,16 @@ import com.jfinal.log.Log4jLogger;
 import com.jfinal.log.Logger;
 import com.jfinal.validate.Validator;
 /**
- * 添加任务验证
+ * 更新验证
  * @author os-yugq
  *
  */
-public class AddTaskValidate extends Validator{
-	Logger log = Log4jLogger.getLogger(AddTaskValidate.class);
+public class UpdateTaskValidate extends Validator{
+	Logger log = Log4jLogger.getLogger(UpdateTaskValidate.class);
 	@Override
 	protected void handleError(Controller c) {
 		c.keepModel(User.class);
-		c.render("addTask.jsp");
+		c.render("updateTask.jsp");
 	}
 
 	@Override

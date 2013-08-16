@@ -12,7 +12,7 @@
 	<!-- header -->
 	<div class="page-header">
 		<div class="page-header-content">
-			<h1>
+			<h1> 
 				<i class="icon-arrow-down-3 fg-color-red"></i> 首页<small>任务列表</small>
 			</h1>
 		</div>
@@ -21,6 +21,10 @@
 	<!-- leftMenu -->
 	<div class="page-sidebar">
 		<ul class="sub-menu light">
+			<c:if test="${uname!=null&&taskListRelative!=null}">
+				<li class="sticker sticker-color-black" data-for-id="Operate"><a
+				href="#">可操作任务</a></li>
+			</c:if>
 			<li class="sticker sticker-color-blue" data-for-id="NotBegin"><a
 				href="#">未开始任务</a></li>
 			<li class="sticker sticker-color-yellow" data-for-id="Begin"><a
@@ -33,13 +37,46 @@
 	</div>
 	<!-- leftMenu End -->
 	<div class="page-region">
+		<!-- 可操作任务 -->
+		<div class="page-region-content" id="Operate" style="display: none">
+		<button class="bg-color-blue"  id="updateTask" style="display: none;">更新</button>	
+			<ul class="accordion" data-role="accordion">
+				<li class="active"><a href="#"><h3>可操做的任务</h3></a> 
+					<div id="OperateTask">
+					
+						<ul class="listview fluid">
+							<c:forEach items="${taskListRelative}" var="task">
+								<li class="border-color-blue" value="${task.id}" >
+									<div class="Operate">任务名称：${task.taskName}</div>
+									<div class="time">任务时间：${task.create_Time}</div>
+									<div>
+										任务描述：
+										<blockquote>${task.taskInfo}</blockquote>
+										任务进度:
+										<div class="progress-bar">
+											<div class="bar bg-color-green"
+												style="width: ${task.percent}%"></div>
+											<div class="bar bg-color-yellow"
+												style="width: ${100-task.percent}%"></div>
+										</div>
+										<p class="place-right">
+											<strong>发起人:<a>${task.taskMaker}</a></strong>
+										</p>
+									</div>
+								</li>
+							</c:forEach>
+						</ul>
+					</div></li>
+			</ul>
+		</div>
+		<!-- 可操作的 end -->
 		<!-- 未开始  -->
 		<div class="page-region-content" id="NotBegin">
 			<ul class="accordion" data-role="accordion">
 				<li class="active"><a href="#"><h3>未开始的任务</h3></a>
 					<div>
 						<ul class="listview fluid">
-							<c:if test="${user_info.attrs['uname']!=null}">
+							<c:if test="${uname!=null}">
 							<li class="border-color-blue">
 							<a href="addTask">
 								<div class="title" style="text-align: center;"><b>新建任务</b></div>
@@ -58,9 +95,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 											<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a>${task.taskMaker}</a></strong>
@@ -69,6 +106,12 @@
 								</li>
 							</c:forEach>
 						</ul>
+						<!-- div class="span8" style="text-align: center;">
+							当前第<span id="pagCurrent">1</span>页,共<span id="pagTotal">${totalPage}</span>页,跳转至<input style="width: 20px;" type="text" name="pagNo" id="pagNo"></input>页
+							<button id="upPage" disabled>上一页</button>
+							<button id="downPage">下一页</button>
+							
+						</div -->
 					</div></li>
 			</ul>
 		</div>
@@ -80,7 +123,7 @@
 					<div>
 						<ul class="listview fluid">
 							<c:forEach items="${taskListOn}" var="task">
-								<li class="taskList selected"
+								<li class="taskList bg-color-yellow"
 									value="${task.id}">
 									<div class="title">任务名称：${task.taskName}</div>
 									<div>
@@ -89,9 +132,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 												<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a>${task.taskMaker}</a></strong>
@@ -137,7 +180,7 @@
 				<li class="active"><a href="#"><h3>冻结的任务</h3></a>
 					<div>
 						<ul class="listview fluid">
-							<c:forEach items="${taskListOn}" var="task">
+							<c:forEach items="${taskListBlocked}" var="task">
 								<li class="taskList bg-color-red fg-color-white" value="${task.id}">
 									<div class="title">任务名称：${task.taskName}</div>
 									<div>
@@ -146,9 +189,9 @@
 										任务进度:
 										<div class="progress-bar">
 											<div class="bar bg-color-green"
-												style="width: ${task.taskPercent}%"></div>
+												style="width: ${task.percent}%"></div>
 											<div class="bar bg-color-yellow"
-												style="width: ${100-task.taskPercent}%"></div>
+												style="width: ${100-task.percent}%"></div>
 										</div>
 										<p class="place-right">
 											<strong>发起人:<a class="fg-color-white">${task.taskMaker}</a></strong>
@@ -187,13 +230,55 @@ function toPlace(location){
 			}
 		});
 		$(".title").parent().click(function() {
-			tid=this.value;
-			window.location.href="taskInfo/show/"+tid;
+			window.location.href="taskInfo/show/"+this.value;
 		});
 		
-		$(".taskList").click(function(){
-			window.location.href="taskInfo/show/"+$(this).val();
+		var operate =$(".Operate").parent();
+		var tid;
+		operate.click(function() {
+			for(i=0;i<operate.length;i++){
+				operate[i].className="border-color-blue";
+			}
+			this.className="selected";
+			tid=this.value;
+			$("#updateTask").show();
 		});
+		
+		
+		$("#updateTask").click(function() {
+			window.location.href="updateTask/"+tid;
+		});
+		
+		//分页操作
+		var a = parseInt($("#pagCurrent").text());
+		$("#downPage").click(function(){
+			$("#upPage")[0].disabled=false;
+			a++;
+			
+			$.ajax({
+				url:"doPage",
+				type:"POST",
+				data:{"a":a},
+				success:function(){
+					$("#pagCurrent").text(a);
+					if(a==$("#pagTotal").text()){
+						$("#downPage")[0].disabled=true;
+					}
+				}
+			});
+			
+			
+		});
+		
+		$("#upPage").click(function(){
+			$("#downPage")[0].disabled=false;
+			a--;
+			$("#pagCurrent").text(a);
+			if(a==1){
+				$("#upPage")[0].disabled=true;
+			}
+		});
+		
 	});
 </script>
 </body>
