@@ -31,7 +31,7 @@
 					 	<div class="span8">
 						 <div class="branchTable">名称:</div>
 							 <div >
-							 	<input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" />
+							 	<input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" style="height:32px;" />
 							 	<span class="fg-color-red" >${branchName_error}</span>
 							 </div>
 						 </div>
@@ -44,7 +44,7 @@
 						 <div class="span8">
 							 <div class="branchTable">计划时间:</div>
 							 <div class=span4" style= "float: left;">
-								 <input class="datepicker" type="date"  autofocus value="" id="branch.play_Time" name="branch.play_Time"/>
+								 <input class="datepicker span4" type="date"  autofocus value="" id="branch.play_Time" name="branch.play_Time" style="height:32px;"/>
 							 </div>
 						 </div>
 						 <div class="span8">
@@ -61,7 +61,7 @@
 						<div class="span8">
 							<div class="branchTable">指定人：</div>
 							<div style="float: left;">
-								<input type="text"	id="BranchUsername" readonly class="span3"/> 
+								<input type="text"	id="BranchUsername" readonly class="span3"  style="height:32px;"/> 
 								<select id="branchUname" style="margin-left: -16px;">
 										<option>请选择</option>
 										<c:forEach items="${userListSession}" var="user">
