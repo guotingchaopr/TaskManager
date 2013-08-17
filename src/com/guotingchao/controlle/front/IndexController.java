@@ -39,15 +39,13 @@ import com.jfinal.plugin.activerecord.Model;
  */
 @Before(ForntUnameInterceptor.class)
 public class IndexController extends Controller{
-	
 	Logger log= Log4jLogger.getLogger(IndexController.class);
-	Jedis jedis = RedisKit.getJedis();
-	
 	/**
 	 * 添加分支
 	 */
 	@Before(ForntInterceptor.class)	
 	public void addBranch(){
+		Jedis jedis = RedisKit.getJedis();
 		if(getUser("id")!=null){
 			Long uid =Long.parseLong(getUser("id"));
 			String task_key = getSession().getId()+uid;
@@ -63,6 +61,7 @@ public class IndexController extends Controller{
 			jedis.set(task_key+"userNames", getPara("userNames"));
 			setSessionAttr("taskUserNames", task_key+"userNames");
 		}
+		RedisKit.returnResource(jedis);//释放连接池
 		render("addBranch.jsp");
 		
 	}
@@ -71,6 +70,7 @@ public class IndexController extends Controller{
 	 */
 	@Before(AddBranchValidate.class)
 	public void backTask(){
+		Jedis jedis = RedisKit.getJedis();
 		if(getPara("branch.branchName")!=null){
 			if(getUser("id")!=null){
 				String branchStr = "";
@@ -151,6 +151,7 @@ public class IndexController extends Controller{
 				setAttr("taskUserNames", jedis.get(taskUserNames));
 			}
 		}
+		RedisKit.returnResource(jedis);//释放连接池
 		render("addTask.jsp");
 	}
 	/**
@@ -166,6 +167,7 @@ public class IndexController extends Controller{
 	
 	@Before(AddTaskValidate.class)
 	public void doAddTask(){
+		Jedis jedis = RedisKit.getJedis();
 		try {
 			//保存新任务
 			Task task =new Task();
@@ -239,6 +241,7 @@ public class IndexController extends Controller{
 			log.error("添加任务" + getPara("task.taskName")+ "失败,原因：" + e.getMessage());
 			setAttr("add_success_msg", "添加失败");
 		}
+		RedisKit.returnResource(jedis);//释放连接池
 			render("addTask.jsp");
 	}
 	/**
@@ -434,6 +437,7 @@ public class IndexController extends Controller{
 	 * 退出登录
 	 */
 	public void loginOut(){
+		Jedis jedis = RedisKit.getJedis();
 		String user_info = getCookie("user_info");
 		if(user_info==null){
 			user_info = getSessionAttr("user_info");
@@ -447,6 +451,7 @@ public class IndexController extends Controller{
 		removeSessionAttr("user_info");
 		removeCookie("user_info");
 		removeSessionAttr("actionKey");
+		RedisKit.returnResource(jedis); //释放连接池
 		redirect("/");
 	}
 	/**
@@ -455,6 +460,7 @@ public class IndexController extends Controller{
 	 * @return
 	 */
 	public String getUser(String key){
+		Jedis jedis = RedisKit.getJedis();
 		String value = null;
 		String user_info = getCookie("user_info");
 		if(user_info==null){
@@ -470,6 +476,7 @@ public class IndexController extends Controller{
 				}
 			}
 		}
+		RedisKit.returnResource(jedis);
 		return value;
 	}
 

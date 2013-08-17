@@ -24,9 +24,9 @@ import com.jfinal.log.Logger;
  */
 public class ForntInterceptor implements Interceptor {
 	Logger log = Log4jLogger.getLogger(IndexInterceptor.class);
-	Jedis jedis = RedisKit.getJedis();
 	@Override
 	public void intercept(ActionInvocation ai) {
+		Jedis jedis = RedisKit.getJedis();
 		Controller c= ai.getController();
 		String  user_info=c.getCookie("user_info");
 		if(user_info==null){
@@ -37,6 +37,7 @@ public class ForntInterceptor implements Interceptor {
 			if(jedis.exists(user_info)){
 				try {
 					JSONObject json = new JSONObject(jedis.get(user_info));
+					RedisKit.returnResource(jedis); //释放连接
 					String uname = json.getString("uname");
 					c.setAttr("uname", uname);
 				} catch (JSONException e) {

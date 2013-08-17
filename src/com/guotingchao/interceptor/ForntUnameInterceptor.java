@@ -1,15 +1,11 @@
 package com.guotingchao.interceptor;
 
-import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import redis.clients.jedis.Jedis;
 
 import com.guotingchao.MyPlugin.RedisKit;
-import com.guotingchao.model.impl.Task;
-import com.guotingchao.model.impl.User;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.core.ActionInvocation;
 import com.jfinal.core.Controller;
@@ -24,13 +20,13 @@ import com.jfinal.log.Logger;
  */
 public class ForntUnameInterceptor implements Interceptor {
 	Logger log = Log4jLogger.getLogger(IndexInterceptor.class);
-	Jedis jedis = RedisKit.getJedis();
 	@Override
 	public void intercept(ActionInvocation ai) {
+		Jedis jedis = RedisKit.getJedis();
 		Controller c= ai.getController();
 		String  user_info=c.getCookie("user_info");
 		if(user_info==null){
-			user_info=c.getSessionAttr("user_info");
+			user_info=c.getSessionAttr("user_info"); 
 		}
 		if(user_info!=null){
 			if(jedis.exists(user_info)){
@@ -43,6 +39,7 @@ public class ForntUnameInterceptor implements Interceptor {
 				}
 			}
 		}
+		RedisKit.returnResource(jedis);
 		ai.invoke();
 	}
 }

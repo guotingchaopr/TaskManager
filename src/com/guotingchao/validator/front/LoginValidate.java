@@ -17,8 +17,7 @@ import com.jfinal.validate.Validator;
  *
  */
 public class LoginValidate extends Validator{
-	Logger log = Log4jLogger.getLogger(LoginValidate.class);
-	Jedis jedis = RedisKit.getJedis();
+	private Logger log = Log4jLogger.getLogger(LoginValidate.class);
 	@Override
 	protected void handleError(Controller c) {
 		c.keepModel(User.class);
@@ -50,6 +49,7 @@ public class LoginValidate extends Validator{
 		}
 	}
 	public boolean checkIdenting(String userName,String userPass,HttpSession session){
+		Jedis jedis = RedisKit.getJedis();
 		String uname =userName;// getPara("uname");
 		String upass =userPass;// getPara("upass");
 		User user = User.userDao.findFirst("select * from user where user.uname=? and user.upass= ? ",uname,upass);
@@ -57,14 +57,13 @@ public class LoginValidate extends Validator{
 		if(user!=null){
 			String user_info = user.getLong("id")+Utils.getCurTime();
 			jedis.set(user_info,user.toJson());
-			
-			Cookie cookie =new Cookie("user_info", user_info);
+			new Cookie("user_info", user_info); 
 			session.setAttribute("user_info", user_info);
-			
 			flag=true;
 		}else{
 			flag=false;
 		}
+		RedisKit.returnResource(jedis);
 		return flag;
 	}
 }

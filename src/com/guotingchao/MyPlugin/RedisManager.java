@@ -18,8 +18,8 @@ public class RedisManager {
 	public void init() {
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxActive(20);
-		config.setMaxIdle(20);
-		config.setMaxWait(300L);
+		config.setMaxIdle(50);
+		config.setMaxWait(1000L);
 		config.setTestOnBorrow(true);
 		pool = new JedisPool(config, host,port,dbIndex);
 	}
