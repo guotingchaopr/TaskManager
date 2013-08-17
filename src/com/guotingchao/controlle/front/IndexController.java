@@ -351,7 +351,7 @@ public class IndexController extends Controller{
 		try {
 			//更新任务
 			Long tid= getSessionAttr("tid");
-			Task task =Task.taskDao.findById(tid);
+			Task task =Task.taskDao.findById(tid+"");
 			task.set("taskMaker", getPara("task.taskMaker"));
 			task.set("taskInfo", getPara("task.taskInfo"));
 			task.set("percent", getPara("task.percent"));
