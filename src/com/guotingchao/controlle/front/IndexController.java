@@ -176,6 +176,15 @@ public class IndexController extends Controller{
 			task.set("play_Time", Utils.getDate(getPara("task.play_Time"))); 
 			
 			if (task.save()) {
+				//获取redis的task_key 并删除key
+				String task_key = getSessionAttr("task");
+				if(task_key!=null&&"".equals(task_key)){
+					if(jedis.exists(task_key)){
+						jedis.del(task_key);
+						//删除session
+						removeSessionAttr("task");
+					}
+				}
 				//中间表添加内容  批量保存处理
 				List<Model> user_task_list = new ArrayList<Model>();
 				String[] uid = getPara("user.id").split(",");
@@ -184,7 +193,6 @@ public class IndexController extends Controller{
 					T_user_task temp_user_task = new T_user_task();
 					temp_user_task.set("tid",tid);
 					temp_user_task.set("uid",uid[i]);
-					
 					user_task_list.add(temp_user_task);
 				}
 				//保存中间表
@@ -216,6 +224,9 @@ public class IndexController extends Controller{
 							}
 							if(Branch.branchDao.batchSave(branch_list)){
 								setAttr("add_success_msg", "添加成功");
+								// 删除branch_key
+								jedis.del(branch_key);
+								removeAttr("branch_key");
 							}else{
 								setAttr("add_success_msg", "失败模块未添加");
 							}
@@ -363,6 +374,7 @@ public class IndexController extends Controller{
 			task.set("play_Time", play_time); 
 			
 			if (task.update()) {
+				
 				String[] uid_new = getPara("user.id").split(",");
 				String[] uid_old = T_user_task.taskUserDao.getUidArray(tid);
 				//两个数组内容不同就进行  更新中间表
@@ -390,14 +402,16 @@ public class IndexController extends Controller{
 					}
 					
 				}
-				
 				setAttr("update_success_msg", "添加成功");
+				setAttr("task",task);
 			}
 		} catch (Exception e) {
 			log.error("更新任务" + getPara("task.taskName")+ "失败,原因：" + e.getMessage());
 			setAttr("update_success_msg", "添加失败");
 		}
+		
 		render("updateTask.jsp");
+		
 	}
 	
 	

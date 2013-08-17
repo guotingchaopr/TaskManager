@@ -16,7 +16,7 @@
 	<div class="page-header">
 		<div class="page-header-content">
 			<h1>
-				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>模块<small>添加</small>
+				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></i></a>模块<small>添加</small>
 			</h1>
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 					 	<div class="span8">
 						 <div class="branchTable">名称:</div>
 							 <div >
-							 	<input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" />
+							 	<input class="span4" type="text" id="branch.branchName" name="branch.branchName" placeholder="请输入名称" value="" style="height:32px;" />
 							 	<span class="fg-color-red" >${branchName_error}</span>
 							 </div>
 						 </div>
@@ -43,9 +43,8 @@
 						
 						 <div class="span8">
 							 <div class="branchTable">计划时间:</div>
-							 <div class="input-control text datepicker span4" style= "float: left;" id="picker1" data-Role="datepicker" data-param-lang="zh-cn">
-								 <input type="text" id="branchPlay_Time" value="" />
-								 <button onclick="return false;" class="btn-date"></button>
+							 <div class=span4" style= "float: left;">
+								 <input class="datepicker span4" type="date"  autofocus value="" id="branch.play_Time" name="branch.play_Time" style="height:32px;"/>
 							 </div>
 						 </div>
 						 <div class="span8">
@@ -62,7 +61,7 @@
 						<div class="span8">
 							<div class="branchTable">指定人：</div>
 							<div style="float: left;">
-								<input type="text"	id="BranchUsername" readonly class="span3"/> 
+								<input type="text"	id="BranchUsername" readonly class="span3"  style="height:32px;"/> 
 								<select id="branchUname" style="margin-left: -16px;">
 										<option>请选择</option>
 										<c:forEach items="${userListSession}" var="user">
@@ -78,7 +77,6 @@
 							</div>
 						</div>			
 					</div >
-					<input type="hidden" id="branch.play_Time" name="branch.play_Time" value="" />
 					<input type="hidden" id="branch.rank" name="branch.rank" value="" />
 					<input type="hidden" id="branch.uid" name="branch.uid" value="" />
 					<input type="hidden" id="minName" name="minName" value="" />
@@ -122,10 +120,8 @@
 		var minName = beforeName+$("#branch\\.branchName").val()+afterName;
 		$("#minName").val(minName);
 		
-		var playtime = $("#branchPlay_Time").val();
-		playtime = playtime.replace("年", "-");
-		playtime = playtime.replace("月", "-");
-		playtime = playtime.replace("日", "");
+		var playtime = $("#branch\\.play_Time").val();
+		playtime = playtime.replace("/", "-");
 		$("#branch\\.play_Time").val(playtime);
 		
 		bRank=$("#branchRating .rated").length;
