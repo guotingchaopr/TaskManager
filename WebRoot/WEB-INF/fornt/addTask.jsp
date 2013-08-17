@@ -16,7 +16,7 @@
 	<div class="page-header">
 		<div class="page-header-content">
 			<h1>
-				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></a></i>添加<small>新任务</small>
+				<a href="<%=basePath %>"><i class="icon-arrow-left-3 fg-color-red" style="font-size: 60px;"></i></a>添加<small>新任务</small>
 			</h1>
 		</div>
 	</div>
@@ -25,60 +25,16 @@
 		<div class="page-region-content">
 			<form id="addTaskFrom" action="doAddTask" method="post">
 				<div class="row">
-					<table class="span8 border">
-						<tr>
-							<td>派发人:</td>
-							<td><input class="span4" type="text" id="task.taskMaker" value="${uname}" readonly  value="" name="task.taskMaker" /></td>
-						</tr>
-						<tr>
-							<td>任务名称:</td>
-							<td>
-								<div class="input-control text span4">
-									<span class="fg-color-red" >${taskName_error}</span>
-									<input type="text" id="task.taskName" placeholder="请输入名称"
-										name="task.taskName" value="${taskName}" />
-									<button class="btn-clear"  type="button"></button>
-								</div> 
-								
-							</td>
-						</tr>
-						<tr>
-							<td>任务描述：</td>
-							<td>
-								<div class="input-control textarea span4">
-									<textarea placeholder="在这描述任务" id="task.taskInfo"
-										name="task.taskInfo">${taskInfo}</textarea>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>计划时间：</td>
-							<td>
-								<div class="input-control text datepicker span4" id="picker1"
-									data-Role="datepicker" data-param-lang="zh-cn">
-									<input type="text" id="task.play_Time" name="task.play_Time"
-										value="" />
-									<button onclick="return false;" class="btn-date"></button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>重要指数：</td>
-							<td><input type="hidden"
-								id="task.rank" name="task.rank" />
-								<div class="rating" data-role="rating" id="rating">
-									<a href="javascript:void(0)" class=""></a> <a
-										href="javascript:void(0)" class=""></a> <a
-										href="javascript:void(0)" class=""></a> <a
-										href="javascript:void(0)" class=""></a> <a
-										href="javascript:void(0)" class=""></a> <a
-										href="javascript:void(0)" class=""></a>
-								</div></td>
-						</tr>
-						<tr>
-							<td>指定人：</td>
-							<td>
-							<div class="span4">
+				
+				<div class="span4 bg-color-blue" style="float: left; min-height:110px">
+						<span class="place-right icon-user-3 taskicon"></span>                       
+                        <h2 class="fg-color-white">&nbsp;派发人</h2>
+                        <input class="span4" type="text" id="task.taskMaker" value="${uname}" readonly  value="" name="task.taskMaker" style="height:32px;"/>
+                </div>
+                <div class="span4 bg-color-blue " style="float: left;min-height:110px">
+                        <span class="place-right icon-user-2 taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;指定人</h2>
+						<div class="span4">
 								<div id="username" class="span3 namecontrol" >
 									<c:forEach items="${userListSession}" var="user">
 									<div class="nameshow" id="${user.attrs['uname']}" >
@@ -97,23 +53,69 @@
 								</div>
 							</div>
 							<div class="float:left;"><span class="fg-color-red">${uid_error}</span></div>
-							<input type="hidden" name="user.id" id="user.id" value="" /> </td>
-						</tr>
-							<tr id="modelName" >
-							<td>模块：</td>
-							<td>
-								<div class="span3 namecontrol" id="minBranch">
-								</div>
-								<div class="span1 addBranch" id="addBranch">添加模块 </div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan='2' style="text-align: center;"><input
-								type="button" id="addTask" value="添加" /> <input type="button"
-								value="返回" onclick="javascript:window.history.go(-1)" /></td>
-						</tr>
-					</table>
-				</div>
+							<input type="hidden" name="user.id" id="user.id" value="" />
+                </div>
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-pencil taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;任务名称</h2>
+                        <div class="input-control text span4">
+							<span class="fg-color-red" >${taskName_error}</span>
+							<input type="text" id="task.taskName" placeholder="请输入名称"
+								name="task.taskName" value="${taskName}" />
+							<button class="btn-clear"  type="button"></button>
+						</div>
+                </div>
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-book taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;任务描述</h2>
+						<div class="input-control textarea span4">
+									<textarea placeholder="在这描述任务" id="task.taskInfo"
+										name="task.taskInfo" style="min-height:32px">${taskInfo}</textarea>
+						</div> 
+                </div>
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-calendar taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;计划时间</h2>
+						<div class="span4">
+							<input class="datepicker span4" type="date" id="task.play_Time" name="task.play_Time" autofocus value="" style="height:32px;"/>
+						</div>
+                </div>
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-star-3 taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;重要指数</h2>
+						<input type="hidden"
+								id="task.rank" name="task.rank" />
+								<div class="rating" data-role="rating" id="rating">
+									<a href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a> <a
+										href="javascript:void(0)" class=""></a>
+						</div>
+                </div>
+                
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-tree-view taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;模块</h2>
+                        <div class="span4 ">
+							<div class="span3 namecontrol" id="minBranch"></div>
+							<div class="span1 addBranch" id="addBranch">添加模块 </div>
+						</div>
+                </div>
+                <div class="span4 bg-color-blue" style="float: left;min-height:110px">
+                        <span class="place-right icon-wrench taskicon"></span> 
+                        <h2 class="fg-color-white">&nbsp;操作</h2>
+                        <div class="span4 ">
+	                        <div class="span2 " style="float: left;text-align: center;">
+	                        	<input type="button" id="addTask" value="添加" style="top: 13px;"/>
+	                        </div>
+	                        <div class="span2 " style="float: left;text-align: center;">
+	                     	  <input type="button" value="返回" onclick="javascript:window.history.go(-1)" />
+	                        </div>
+						</div>
+                </div>
+			</div>
 			</form>
 			<form id="addBranchFrom" action="addBranch" method="post">
 				<input type="hidden" id="userNames" name="userNames" value="" />
@@ -207,9 +209,7 @@
 		$("#user\\.id").val(valueStr);
 		$("#task\\.rank").val($("#rating .rated").length);
 		var playtime = $("#task\\.play_Time").val();
-		playtime = playtime.replace("年", "-");
-		playtime = playtime.replace("月", "-");
-		playtime = playtime.replace("日", "");
+		playtime = playtime.replace("/", "-");
 		$("#task\\.play_Time").val(playtime);
 
 		$("#addTaskFrom").submit();
@@ -238,9 +238,7 @@
 		$("#taskInfo").val($("#task\\.taskInfo").val());
 		$("#taskRank").val($("#rating .rated").length);
 		var playtime = $("#task\\.play_Time").val();
-		playtime = playtime.replace("年", "-");
-		playtime = playtime.replace("月", "-");
-		playtime = playtime.replace("日", "");
+		playtime = playtime.replace("/", "-");
 		$("#taskPlayTime").val(playtime);
 
 		$("#addBranchFrom").submit();

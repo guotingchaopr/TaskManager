@@ -14,8 +14,7 @@ var msgBox = function($scope,  $http){
 			$(".msg").animate({bottom:0},2000);
 		}else{
 			$(".msg").hide();
-		}
-		console.log($scope);
+		}	
 		
 	});
 };
